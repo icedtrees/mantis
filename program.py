@@ -17,10 +17,8 @@ for servoId in config.wheels[0] + config.wheels[1] + config.joints:
     net._dynamixel_map[servoId] = newDynamixel
 
 # TODO Move this to a saner place. Random global vars
-data = calculate_angle(0, get_angle_value(0))
 curVel = 0 # Both left and right velocity
 curSpin = 0 # Left velocity and inverse right velocity
-curAngle = data['joints'][0]
 
 # TODO better name pls
 # Make negative velocities into correct corresponding positive one
@@ -56,8 +54,6 @@ def _change_velocity(vel, spin):
 
     data = calculate_angle(curVel, net[config.joints[0]].current_position) # Take angle from front joint
 
-
-
     # If any velocity is negative then abs() and + 1024
 
     for servo in zip(config.wheels[0], data['wheels'][0]):
@@ -73,25 +69,25 @@ def _change_velocity(vel, spin):
     net.synchronize()
 
 def _change_angle(angle, speed, relative=False):
-    print 'Turning {} units (small)'.format(angle)
-    global curAngle
-    if relative:
-        curAngle += angle
-    else:
-        curAngle = angle
-    data = calculate_angle(curVel, curAngle) # TODO poll and update as we turn
-    curAngle = data['joints'][0]
+    print 'Turning {} units (small)'.format(speed)
+    data = calculate_angle(curVel, angle) # Take angle from front joint
     print 'Apparently joints are {}'.format(data['joints'])
 
     # Front
     actuator = net[config.joints[0]]
-    actuator.moving_speed = speed
-    actuator.goal_position = data['joints'][0]
+    if speed == 0:
+        actuator.stop()
+    else:
+        actuator.moving_speed = speed
+        actuator.goal_position = data['joints'][0]
 
     # Rear
     actuator = net[config.joints[2]]
-    actuator.moving_speed = speed
-    actuator.goal_position = data['joints'][1]
+    if speed == 0:
+        actuator.stop()
+    else:
+        actuator.moving_speed = speed
+        actuator.goal_position = data['joints'][1]
 
     net.synchronize()
 
@@ -123,7 +119,7 @@ for actuator in net.get_dynamixels():
 
     # Initial speed and angles
     _change_velocity(curVel, False) # 0 default
-    _change_angle(curAngle, 50)  # 0 default
+    _change_angle(get_angle_value(0), 50)  # 0 default
 
 
 def execute_command(cmd):
@@ -141,17 +137,22 @@ def execute_command(cmd):
 
     elif cmd[0] == 't':
         # Turn
-        angle = float(cmd[1:])
-        print 'Read in user input angle {}'.format(angle)
-        _change_angle(angle, 50, True) # arbitrary
+        direction = int(float(cmd[1:]))
+        target = -1 if direction < 0 else 1
+        print 'Read in user input angle direction {}'.format(direction)
+        _change_angle(get_angle_value(target), abs(direction), True)
     elif cmd[0] == 'l':
         # Lift
-        angle = int(cmd[1:])
-        print 'Lifting by {} units'.format(angle)
+        direction = int(float(cmd[1:]))
+        target = 412 if direction < 0 else 652 # TODO arbitrary
+        print 'Lifting at {} units speed'.format(direction)
 
         actuator = net[config.joints[1]]
-        actuator.moving_speed = 50 # arbitrary
-        actuator.goal_position += angle
+        if direction == 0:
+            actuator.stop()
+        else:
+            actuator.moving_speed = abs(direction)
+            actuator.goal_position = target
 
         net.synchronize()
     elif cmd[0] == 'h':

@@ -1,4 +1,4 @@
 baudRate: 1000000
-highestServoId: 18
+highestServoId: 19
 port: /dev/ttyUSB0
-servoIds: [16, 18]
+servoIds: [7, 12, 19, 11, 13, 14, 8, 16, 17]

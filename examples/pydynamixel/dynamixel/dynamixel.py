@@ -302,20 +302,21 @@ class Dynamixel (object):
         """
         if register in [AX12.GoalPosition, AX12.MovingSpeed]:
             if self._synchronized:
-                if register == AX12.MovingSpeed and value == 0:
-                    value = 1
-                    print "Moving speed %d " % (value)
+                # We don't really need this check
+                # if register == AX12.MovingSpeed and value == 0:
+                #     value = 1
+                #     print "Moving speed %d " % (value)
                 self[register] = value
                 self.changed = True
-            elif register in [AX12.ModelNumber, 
-                              AX12.FirmwareVersion, 
-                              AX12.CurrentPosition, 
-                              AX12.CurrentSpeed, 
-                              AX12.CurrentLoad, 
-                              AX12.CurrentVoltage,
-                              AX12.CurrentTemperature, 
-                              AX12.Moving]:
-                raise ValueError("Cannot set register")
+        elif register in [AX12.ModelNumber, 
+                          AX12.FirmwareVersion, 
+                          AX12.CurrentPosition, 
+                          AX12.CurrentSpeed, 
+                          AX12.CurrentLoad, 
+                          AX12.CurrentVoltage,
+                          AX12.CurrentTemperature, 
+                          AX12.Moving]:
+            raise ValueError("Cannot set register")
             
         register_length = self.register_length(register)
         if self._no_cache(register):
@@ -325,8 +326,9 @@ class Dynamixel (object):
                                          value,
                                          False)
             return
-        if self[register] == value:
-            return
+        # We don't really need this
+        # if self[register] == value:
+        #     return
         
         self._dyn_net.write_register(self._id,
                                      register,

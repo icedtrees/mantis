@@ -1,6 +1,6 @@
 import config
 import dynamixel
-from wheel_velocity import calculate_angle
+from wheel_velocity import calculate_angle, get_angle_value
 
 # Establish a serial connection to the dynamixel network.
 # This usually requires a USB2Dynamixel
@@ -15,6 +15,71 @@ net = dynamixel.DynamixelNetwork(serial)
 for servoId in config.wheels[0] + config.wheels[1] + config.joints:
     newDynamixel = dynamixel.Dynamixel(servoId, net)
     net._dynamixel_map[servoId] = newDynamixel
+
+# TODO Move this to a saner place. Random global vars
+data = calculate_angle(0, get_angle_value(0))
+curVel = 0
+curAngle = data['joints'][0]
+
+# TODO better name pls
+# Make negative velocities into correct corresponding positive one
+def _fix_vel(vel):
+    if vel <= -2048:
+        return _fix_vel(vel + 2048)
+    elif vel <= -1024:
+        return abs(vel + 1024)
+    elif vel < 0:
+        return abs(vel) + 1024
+    elif vel >= 2048:
+        return vel - 2048
+    else:
+        return vel
+
+def _reverse(vel):
+    vel = _fix_vel(vel)
+    if vel < 1024:
+        return vel + 1024
+    elif vel >= 1024:
+        return vel - 1024
+
+def _change_velocity(vel, reverse=''):
+    # We need to know the current angle of our robot
+    # and calculate the velocities of our individual wheels
+    print 'Velocity to {}'.format(vel)
+    curVel = vel
+    data = calculate_angle(vel, net[config.joints[0]].current_position) # Take angle from front joint
+
+    # If any velocity is negative then abs() and + 1024
+
+    for servo in zip(config.wheels[0], data['wheels'][0]):
+        # Servo is a tuple (id, vel)
+        actuator = net[servo[0]]
+        actuator.moving_speed = _reverse(servo[1]) if reverse == 'l' else _fix_vel(servo[1])
+    for servo in zip(config.wheels[1], data['wheels'][1]):
+        # Servo is a tuple (id, vel)
+        actuator = net[servo[0]]
+        actuator.moving_speed = _reverse(servo[1]) if reverse != 'r' else _fix_vel(servo[1])
+
+    # Write the changes
+    net.synchronize()
+
+def _change_angle(angle, speed):
+    print 'Turning to {} units'.format(angle)
+    curAngle = angle
+    data = calculate_angle(curVel, curAngle) # TODO poll and update as we turn
+    print 'Apparently joints are {}'.format(data['joints'])
+
+    # Front
+    actuator = net[config.joints[0]]
+    actuator.moving_speed = speed
+    actuator.goal_position = data['joints'][0]
+
+    # Rear
+    actuator = net[config.joints[2]]
+    actuator.moving_speed = speed
+    actuator.goal_position = data['joints'][1]
+
+    net.synchronize()
 
 # Initial read in
 for actuator in net.get_dynamixels():
@@ -42,8 +107,9 @@ for actuator in net.get_dynamixels():
     else:
         print '    Something is wrong'
 
-    # Why don't we need this?
-    # net.synchronize()
+    # Initial speed and angles
+    _change_velocity(curVel) # 0 default
+    _change_angle(curAngle, 50)  # 0 default
 
 # Command loop
 while (True):
@@ -58,46 +124,29 @@ while (True):
             vel = int(cmd[1:])
 
         # Now vel is the required tangential velocity
-        # We need to know the current angle of our robot
-        # and calculate the velocities of our individual wheels
-        print 'Velocity to %d' % vel
-        data = calculate_angle(vel, net[config.joints[0]].current_position) # Take angle from front joint
+        _change_velocity(vel, reverse)
 
-        for servo in zip(config.wheels[0], data['wheels'][0]):
-            # Servo is a tuple (id, vel)
-            print servo
-            actuator = net[servo[0]]
-            print actuator
-            actuator.moving_speed = servo[1] + (1024 if reverse == 'l' else 0)
-        for servo in zip(config.wheels[1], data['wheels'][1]):
-            # Servo is a tuple (id, vel)
-            actuator = net[servo[0]]
-            actuator.moving_speed = servo[1] + (1024 if reverse != 'r' else 0)
     elif cmd[0] == 't':
         # Turn
-        degrees = int(cmd[1:])
-        print 'Turning left by %d degrees' % degrees
-
-        # Front
-        actuator = net[config.joints[0]]
-        actuator.moving_speed = 50 # arbitrary
-        actuator.goal_position = 512 + degrees
-
-        # Rear
-        actuator = net[config.joints[2]]
-        actuator.moving_speed = 50 # arbitrary
-        actuator.goal_position = 512 - degrees
+        angle = float(cmd[1:])
+        print 'Read in user input angle {}'.format(angle)
+        _change_angle(get_angle_value(angle), 50) # arbitrary
     elif cmd[0] == 'l':
         # Lift
-        degrees = int(cmd[1:])
-        print 'Lifting by %d degrees' % degrees
+        angle = float(cmd[1:])
+        print 'Lifting by %d units' % angle
 
         actuator = net[config.joints[1]]
         actuator.moving_speed = 50 # arbitrary
-        actuator.goal_position = 512 + degrees
+        actuator.goal_position = 512 + angle
+
+        net.synchronize()
+    elif cmd[0] == 's':
+        for actuator in net.get_dynamixels():
+            actuator.stop()
+
+        net.synchronize()
     elif cmd[0] == 'q':
         break
-
-    net.synchronize()
 
 print('Done')

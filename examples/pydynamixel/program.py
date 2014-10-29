@@ -87,4 +87,6 @@ while (True):
     elif cmd[0] == 'q':
         break
 
+    net.synchronize()
+
 print('Done')

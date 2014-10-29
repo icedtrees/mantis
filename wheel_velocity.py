@@ -87,11 +87,12 @@ def calculate_angle(velocity, angleValue):
     """
 
     # Straight-angled case
-    if abs(angleValue) < 10 ** -2:  # practically straight
-        if velocity > MAX_WHEEL_VELOCITY:
-            print("{} exceeds max velocity {} for the given angle {}".format(velocity, MAX_WHEEL_VELOCITY, angleValue))
+    if abs(angleValue) - CENTER_VALUE_TOP < 10 ** -2:  # practically straight
+        if abs(velocity) > MAX_WHEEL_VELOCITY:
+            print("{} exceeds max velocity {} for angle {}".format(abs(velocity), MAX_WHEEL_VELOCITY, angleValue))
             print("Velocity is being set to {}".format(MAX_WHEEL_VELOCITY))
-            v = MAX_WHEEL_VELOCITY
+            sign = velocity / abs(velocity)
+            v = sign * MAX_WHEEL_VELOCITY
         return {"wheels": ((velocity, velocity, velocity), (velocity, velocity, velocity)),
                 "joints": (CENTER_VALUE_TOP, CENTER_VALUE_BOTTOM)}
 
@@ -122,10 +123,11 @@ def calculate_angle(velocity, angleValue):
         maxVelocity = MAX_WHEEL_VELOCITY * (130 * tan(pi - a) / (SPINE_BOTTOM / cos(pi - a2) + ARM_BOTTOM_LEFT))
     maxVelocity -= 10  # for safety
 
-    if velocity > maxVelocity:
-        print("{} exceeds max velocity {} for the given angle {}".format(velocity, maxVelocity, angleValue))
+    if abs(velocity) > maxVelocity:
+        print("{} exceeds max velocity {} for angle {}".format(abs(velocity), maxVelocity, angleValue))
         print("Velocity is being set to {}".format(maxVelocity))
-        v = maxVelocity
+        sign = velocity / abs(velocity)
+        v = sign * maxVelocity
     else:
         v = velocity
 
@@ -141,3 +143,5 @@ def calculate_angle(velocity, angleValue):
 
     return {"wheels": ((tl, ml, bl), (tr, mr, br)),
             "joints": (_angle_to_value(a, True), _angle_to_value(a2, False))}
+
+print(calculate_angle(300, 550))

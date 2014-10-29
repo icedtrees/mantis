@@ -9,4 +9,4 @@ wheels = ((7, 12, 19), (11, 13, 14))
 joints = (8, 16, 17)
 
 baudRate = 1000000
-port = '/dev/ttyUSB0'
+port = '/dev/ttyUSB2'

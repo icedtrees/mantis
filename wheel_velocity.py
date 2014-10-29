@@ -146,7 +146,7 @@ def calculate_angle(velocity, angleValue):
     br = v * (SPINE_BOTTOM / (SPINE_TOP * tan(a) * cos(a2)) - ARM_BOTTOM_RIGHT / (SPINE_TOP * tan(a)))
 
     tl, tr, ml, mr, bl, br, = map(int, (tl, tr, ml, mr, bl, br))
-    aValue, a2Value = map(lambda angle: int(_angle_to_value(angle, True)), (a, a2))
+    aValue, a2Value = map(lambda angle: int(_angle_to_value(angle, angle == a)), (a, a2))
 
     return {"wheels": ((tl, ml, bl), (tr, mr, br)),
             "joints": (aValue, a2Value)}

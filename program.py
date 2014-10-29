@@ -63,10 +63,15 @@ def _change_velocity(vel, reverse=''):
     # Write the changes
     net.synchronize()
 
-def _change_angle(angle, speed):
-    print 'Turning to {} units'.format(angle)
-    curAngle = angle
+def _change_angle(angle, speed, relative=False):
+    print 'Turning {} units (small)'.format(angle)
+    global curAngle
+    if relative:
+        curAngle += angle
+    else:
+        curAngle = angle
     data = calculate_angle(curVel, curAngle) # TODO poll and update as we turn
+    curAngle = data['joints'][0]
     print 'Apparently joints are {}'.format(data['joints'])
 
     # Front
@@ -129,7 +134,7 @@ def execute_command(cmd):
         # Turn
         angle = float(cmd[1:])
         print 'Read in user input angle {}'.format(angle)
-        _change_angle(get_angle_value(angle), 50) # arbitrary
+        _change_angle(angle, 50, True) # arbitrary
     elif cmd[0] == 'l':
         # Lift
         angle = float(cmd[1:])

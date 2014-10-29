@@ -18,7 +18,8 @@ for servoId in config.wheels[0] + config.wheels[1] + config.joints:
 
 # TODO Move this to a saner place. Random global vars
 data = calculate_angle(0, get_angle_value(0))
-curVel = 0
+curVel = 0 # Both left and right velocity
+curSpin = 0 # Left velocity and inverse right velocity
 curAngle = data['joints'][0]
 
 # TODO better name pls
@@ -42,33 +43,30 @@ def _reverse(vel):
     elif vel >= 1024:
         return vel - 1024
 
-def _change_velocity(vel, spin=False):
+def _change_velocity(vel, spin):
     # We need to know the current angle of our robot
     # and calculate the velocities of our individual wheels
     print 'Velocity to {}'.format(vel)
-    data = calculate_angle(vel, net[config.joints[0]].current_position) # Take angle from front joint
+    dataVel = calculate_angle(curVel, net[config.joints[0]].current_position) # Take angle from front joint
 
     # If any velocity is negative then abs() and + 1024
 
     for servo in zip(config.wheels[0], data['wheels'][0]):
         # Servo is a tuple (id, vel)
         actuator = net[servo[0]]
-        if spin:
-            actuator.moving_speed += _fix_vel(servo[1])
-        else:
-            actuator.moving_speed = _fix_vel(servo[1])
+        actuator.moving_speed = _fix_vel(servo[1] + curSpin)
     for servo in zip(config.wheels[1], data['wheels'][1]):
         # Servo is a tuple (id, vel)
         actuator = net[servo[0]]
-        if spin:
-            actuator.moving_speed += _reverse(servo[1])
-        else:
-            actuator.moving_speed = _fix_vel(servo[1])
+        actuator.moving_speed = _reverse(servo[1] - curSpin)
 
     # Write the changes
     net.synchronize()
 
-    curVel = actuator.moving_speed
+    if spin:
+        curSpin = vel
+    else:
+        curVel = vel
 
 def _change_angle(angle, speed, relative=False):
     print 'Turning {} units (small)'.format(angle)
@@ -120,7 +118,7 @@ for actuator in net.get_dynamixels():
         print '    Something is wrong'
 
     # Initial speed and angles
-    _change_velocity(curVel) # 0 default
+    _change_velocity(curVel, False) # 0 default
     _change_angle(curAngle, 50)  # 0 default
 
 
@@ -130,7 +128,7 @@ def execute_command(cmd):
         vel = int(cmd[1:])
 
         # Now vel is the required tangential velocity
-        _change_velocity(vel)
+        _change_velocity(vel, False)
     elif cmd[0] == 's':
         # Spin
         vel = int(cmd[1:])

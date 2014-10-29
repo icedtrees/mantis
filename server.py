@@ -1,4 +1,5 @@
 import SocketServer
+import program
 
 
 class MyUDPHandler(SocketServer.BaseRequestHandler):
@@ -15,6 +16,7 @@ class MyUDPHandler(SocketServer.BaseRequestHandler):
         print "{} wrote:".format(self.client_address[0])
         print data
         socket.sendto(data.upper(), self.client_address)
+        program.execute_command(data)
 
 if __name__ == "__main__":
     HOST, PORT = "0.0.0.0", 9999

@@ -111,9 +111,8 @@ for actuator in net.get_dynamixels():
     _change_velocity(curVel) # 0 default
     _change_angle(curAngle, 50)  # 0 default
 
-# Command loop
-while (True):
-    cmd = raw_input()
+
+def execute_command(cmd):
     if cmd[0] == 'v':
         # Modify velocity
         reverse = ''
@@ -147,6 +146,10 @@ while (True):
 
         net.synchronize()
     elif cmd[0] == 'q':
-        break
+        return
 
-print('Done')
+if __name__ == "__main__":
+    # Command loop
+    while True:
+        cmd = raw_input()
+        execute_command(cmd)

@@ -46,27 +46,31 @@ def _reverse(vel):
 def _change_velocity(vel, spin):
     # We need to know the current angle of our robot
     # and calculate the velocities of our individual wheels
+    global curVel, curSpin
     print 'Velocity to {}'.format(vel)
-    dataVel = calculate_angle(curVel, net[config.joints[0]].current_position) # Take angle from front joint
+
+    if spin:
+        curSpin = vel
+    else:
+        curVel = vel
+
+    data = calculate_angle(curVel, net[config.joints[0]].current_position) # Take angle from front joint
+
+
 
     # If any velocity is negative then abs() and + 1024
 
     for servo in zip(config.wheels[0], data['wheels'][0]):
         # Servo is a tuple (id, vel)
         actuator = net[servo[0]]
-        actuator.moving_speed = _fix_vel(servo[1] + curSpin)
+        actuator.moving_speed = _fix_vel(servo[1] - curSpin)
     for servo in zip(config.wheels[1], data['wheels'][1]):
         # Servo is a tuple (id, vel)
         actuator = net[servo[0]]
-        actuator.moving_speed = _reverse(servo[1] - curSpin)
+        actuator.moving_speed = _reverse(servo[1] + curSpin)
 
     # Write the changes
     net.synchronize()
-
-    if spin:
-        curSpin = vel
-    else:
-        curVel = vel
 
 def _change_angle(angle, speed, relative=False):
     print 'Turning {} units (small)'.format(angle)
@@ -143,7 +147,7 @@ def execute_command(cmd):
     elif cmd[0] == 'l':
         # Lift
         angle = int(cmd[1:])
-        print 'Lifting by %d units' % angle
+        print 'Lifting by {} units'.format(angle)
 
         actuator = net[config.joints[1]]
         actuator.moving_speed = 50 # arbitrary

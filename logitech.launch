@@ -1,0 +1,10 @@
+<!--
+  Driver for the logitech rumblepad2 joystick.
+
+  Use the D pad while pressing and holding the left trigger button (5) to control.
+-->
+<launch>
+
+  <node pkg="joy" type="joy_node" name="joystick"/>
+
+</launch>

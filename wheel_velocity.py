@@ -66,7 +66,7 @@ def _value_to_angle(value):
         return _interpolate(0, value, 1, CENTER_ANGLE_TOP, finalMax)
 
 
-def set_angle(velocity, angleValue):
+def calculate_angle(velocity, angleValue):
     """
     :param velocity: The average tangential velocity of the center of the vehicle, from 0 to 1023
     :param angleValue: The value of the angle that the right side is inclined at. From -1 to 1

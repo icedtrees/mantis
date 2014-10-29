@@ -1,5 +1,6 @@
 import config
 import dynamixel
+from wheel_velocity import calculate_angle
 
 # Establish a serial connection to the dynamixel network.
 # This usually requires a USB2Dynamixel
@@ -55,13 +56,23 @@ while (True):
             vel = int(cmd[2:])
         else:
             vel = int(cmd[1:])
+
+        # Now vel is the required tangential velocity
+        # We need to know the current angle of our robot
+        # and calculate the velocities of our individual wheels
         print 'Velocity to %d' % vel
-        for servo in config.wheels[0]:
-            actuator = net[servo]
-            actuator.moving_speed = vel + (1023 if reverse == 'l' else 0)
-        for servo in config.wheels[1]:
-            actuator = net[servo]
-            actuator.moving_speed = vel + (1023 if reverse != 'r' else 0)
+        data = calculate_angle(vel, net[config.joints[0]].current_position) # Take angle from front joint
+
+        for servo in zip(config.wheels[0], data['wheels'][0]):
+            # Servo is a tuple (id, vel)
+            print servo
+            actuator = net[servo[0]]
+            print actuator
+            actuator.moving_speed = servo[1] + (1024 if reverse == 'l' else 0)
+        for servo in zip(config.wheels[1], data['wheels'][1]):
+            # Servo is a tuple (id, vel)
+            actuator = net[servo[0]]
+            actuator.moving_speed = servo[1] + (1024 if reverse != 'r' else 0)
     elif cmd[0] == 't':
         # Turn
         degrees = int(cmd[1:])

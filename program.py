@@ -56,7 +56,7 @@ def _change_velocity(vel, spin=False):
         if spin:
             actuator.moving_speed += _fix_vel(servo[1])
         else:
-            actuator.moving_speed += _fix_vel(servo[1])
+            actuator.moving_speed = _fix_vel(servo[1])
     for servo in zip(config.wheels[1], data['wheels'][1]):
         # Servo is a tuple (id, vel)
         actuator = net[servo[0]]

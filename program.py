@@ -18,7 +18,28 @@ for servoId in config.wheels[0] + config.wheels[1] + config.joints:
 
 # TODO Move this to a saner place. Random global vars
 curVel = 0
-curAngle = 512
+curAngle = 0
+
+# TODO better name pls
+# Make negative velocities into correct corresponding positive one
+def _fix_vel(vel):
+    if vel <= -2048:
+        return _fix_vel(vel + 2048)
+    elif vel <= -1024:
+        return abs(vel + 1024)
+    elif vel < 0:
+        return abs(vel) + 1024
+    elif vel >= 2048:
+        return vel - 2048
+    else:
+        return vel
+
+def _reverse(vel):
+    vel = _fix_vel(vel)
+    if vel < 1024:
+        return vel + 1024
+    elif vel >= 1024:
+        return vel - 1024
 
 def _change_velocity(vel, reverse=''):
     # We need to know the current angle of our robot
@@ -27,22 +48,22 @@ def _change_velocity(vel, reverse=''):
     curVel = vel
     data = calculate_angle(vel, net[config.joints[0]].current_position) # Take angle from front joint
 
+    # If any velocity is negative then abs() and + 1024
+
     for servo in zip(config.wheels[0], data['wheels'][0]):
         # Servo is a tuple (id, vel)
-        print servo
         actuator = net[servo[0]]
-        print actuator
-        actuator.moving_speed = servo[1] + (1024 if reverse == 'l' else 0)
+        actuator.moving_speed = _reverse(servo[1]) if reverse == 'l' else servo[1]
     for servo in zip(config.wheels[1], data['wheels'][1]):
         # Servo is a tuple (id, vel)
         actuator = net[servo[0]]
-        actuator.moving_speed = servo[1] + (1024 if reverse != 'r' else 0)
+        actuator.moving_speed = _reverse(servo[1]) if reverse != 'r' else servo[1]
 
     # Write the changes
     net.synchronize()
 
 def _change_angle(angle, speed):
-    print 'Turning left by %d units' % angle
+    print 'Turning by %d units' % angle
 
     # Front
     actuator = net[config.joints[0]]
@@ -82,7 +103,7 @@ for actuator in net.get_dynamixels():
 
     # Initial speed and angles
     _change_velocity(curVel) # 0 default
-    _change_angle(curAngle)  # 512 default
+    _change_angle(curAngle, 50)  # 0 default
 
 # Command loop
 while (True):

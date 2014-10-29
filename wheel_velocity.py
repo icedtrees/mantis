@@ -71,10 +71,16 @@ def get_angle_value(coefficient):
     :param value: A float between -1 and 1 indicating the direction and magnitude of the turn.
     :return: Returns the valid angle corresponding to the value between -1 and 1
     """
-    if coefficient < 1:
-        return _interpolate(-1, coefficient, 0, _angle_to_value(MIN_ANGLE, True), CENTER_VALUE_TOP)
+    if coefficient > 1:
+        print("Coefficient is higher than 1. Changing to 1")
+        coefficient = 1
+    elif coefficient < -1:
+        print("Coefficient is lower than -1. Changing to -1")
+        coefficient = -1
+    if coefficient < 0:
+        return int(_interpolate(-1, coefficient, 0, _angle_to_value(MIN_ANGLE, True), CENTER_VALUE_TOP))
     else:
-        return _interpolate(0, coefficient, 1, CENTER_VALUE_TOP, _angle_to_value(MAX_ANGLE, True))
+        return int(_interpolate(0, coefficient, 1, CENTER_VALUE_TOP, _angle_to_value(MAX_ANGLE, True)))
 
 
 def calculate_angle(velocity, angleValue):
@@ -87,14 +93,15 @@ def calculate_angle(velocity, angleValue):
     """
 
     # Straight-angled case
-    if abs(angleValue) - CENTER_VALUE_TOP < 10 ** -2:  # practically straight
+    if abs(angleValue - CENTER_VALUE_TOP) < 10 ** -2:  # practically straight
         if abs(velocity) > MAX_WHEEL_VELOCITY:
             print("{} exceeds max velocity {} for angle {}".format(abs(velocity), MAX_WHEEL_VELOCITY, angleValue))
             print("Velocity is being set to {}".format(MAX_WHEEL_VELOCITY))
             sign = velocity / abs(velocity)
             v = sign * MAX_WHEEL_VELOCITY
+            velocity = int(velocity)
         return {"wheels": ((velocity, velocity, velocity), (velocity, velocity, velocity)),
-                "joints": (CENTER_VALUE_TOP, CENTER_VALUE_BOTTOM)}
+                "joints": (int(CENTER_VALUE_TOP), int(CENTER_VALUE_BOTTOM))}
 
     minValue = _angle_to_value(MIN_ANGLE, True)
     maxValue = _angle_to_value(MAX_ANGLE, True)
@@ -139,9 +146,7 @@ def calculate_angle(velocity, angleValue):
     br = v * (SPINE_BOTTOM / (SPINE_TOP * tan(a) * cos(a2)) - ARM_BOTTOM_RIGHT / (SPINE_TOP * tan(a)))
 
     tl, tr, ml, mr, bl, br, = map(int, (tl, tr, ml, mr, bl, br))
-    aValue, a2Value = map(lambda angle: int(_angle_to_value(angle)), (a, a2))
+    aValue, a2Value = map(lambda angle: int(_angle_to_value(angle, True)), (a, a2))
 
     return {"wheels": ((tl, ml, bl), (tr, mr, br)),
             "joints": (aValue, a2Value)}
-
-print(calculate_angle(300, 550))

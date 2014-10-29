@@ -42,11 +42,10 @@ def _reverse(vel):
     elif vel >= 1024:
         return vel - 1024
 
-def _change_velocity(vel, reverse=''):
+def _change_velocity(vel, spin=False):
     # We need to know the current angle of our robot
     # and calculate the velocities of our individual wheels
     print 'Velocity to {}'.format(vel)
-    curVel = vel
     data = calculate_angle(vel, net[config.joints[0]].current_position) # Take angle from front joint
 
     # If any velocity is negative then abs() and + 1024
@@ -54,14 +53,22 @@ def _change_velocity(vel, reverse=''):
     for servo in zip(config.wheels[0], data['wheels'][0]):
         # Servo is a tuple (id, vel)
         actuator = net[servo[0]]
-        actuator.moving_speed = _reverse(servo[1]) if reverse == 'l' else _fix_vel(servo[1])
+        if spin:
+            actuator.moving_speed += _fix_vel(servo[1])
+        else:
+            actuator.moving_speed += _fix_vel(servo[1])
     for servo in zip(config.wheels[1], data['wheels'][1]):
         # Servo is a tuple (id, vel)
         actuator = net[servo[0]]
-        actuator.moving_speed = _reverse(servo[1]) if reverse != 'r' else _fix_vel(servo[1])
+        if spin:
+            actuator.moving_speed += _reverse(servo[1])
+        else:
+            actuator.moving_speed = _fix_vel(servo[1])
 
     # Write the changes
     net.synchronize()
+
+    curVel = actuator.moving_speed
 
 def _change_angle(angle, speed, relative=False):
     print 'Turning {} units (small)'.format(angle)
@@ -120,15 +127,15 @@ for actuator in net.get_dynamixels():
 def execute_command(cmd):
     if cmd[0] == 'v':
         # Modify velocity
-        reverse = ''
-        if cmd[1] in 'lr':
-            reverse = cmd[1]
-            vel = int(cmd[2:])
-        else:
-            vel = int(cmd[1:])
+        vel = int(cmd[1:])
 
         # Now vel is the required tangential velocity
-        _change_velocity(vel, reverse)
+        _change_velocity(vel)
+    elif cmd[0] == 's':
+        # Spin
+        vel = int(cmd[1:])
+
+        _change_velocity(vel, True)
 
     elif cmd[0] == 't':
         # Turn
@@ -137,21 +144,21 @@ def execute_command(cmd):
         _change_angle(angle, 50, True) # arbitrary
     elif cmd[0] == 'l':
         # Lift
-        angle = float(cmd[1:])
+        angle = int(cmd[1:])
         print 'Lifting by %d units' % angle
 
         actuator = net[config.joints[1]]
         actuator.moving_speed = 50 # arbitrary
-        actuator.goal_position = 512 + angle
+        actuator.goal_position += angle
 
         net.synchronize()
-    elif cmd[0] == 's':
+    elif cmd[0] == 'h':
         for actuator in net.get_dynamixels():
             actuator.stop()
 
         net.synchronize()
     elif cmd[0] == 'q':
-        return
+        exit
 
 if __name__ == "__main__":
     # Command loop

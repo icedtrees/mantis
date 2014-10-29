@@ -31,6 +31,13 @@ SPINE_BOTTOM = 120.0
 # max velocity of any given wheel
 MAX_WHEEL_VELOCITY = 1023.0
 
+# angular limits
+_topMin = atan(tan(MIN_ANGLE_BOTTOM) * SPINE_BOTTOM / SPINE_TOP)
+_topMax = pi - atan(tan(pi - MAX_ANGLE_BOTTOM) * SPINE_BOTTOM / SPINE_TOP)
+
+MIN_ANGLE = max(_topMin, MIN_ANGLE_TOP)  # largest minimum bound
+MAX_ANGLE = min(_topMax, MAX_ANGLE_TOP)  # smallest maximum bound
+
 
 def _interpolate(minSource, source, maxSource, minDest, maxDest):
     sourceLocation = float(source - minSource) / float(maxSource - minSource)
@@ -51,19 +58,23 @@ def _angle_to_value(angle, top):
             return _interpolate(CENTER_ANGLE_BOTTOM, angle, MIN_ANGLE_BOTTOM, CENTER_VALUE_BOTTOM, MIN_VALUE_BOTTOM)
 
 
-# Uses -1 as the leftmost value and 1 as the rightmost value
+# Converts a Dynamixel motor inclination value to an angle for the top axle
 def _value_to_angle(value):
-    # corresponding min and max for top, given min and max for bottom
-    topMin = atan(tan(MIN_ANGLE_BOTTOM) * SPINE_BOTTOM / SPINE_TOP)
-    topMax = pi - atan(tan(pi - MAX_ANGLE_BOTTOM) * SPINE_BOTTOM / SPINE_TOP)
-
-    finalMin = max(topMin, MIN_ANGLE_TOP)  # largest minimum bound
-    finalMax = min(topMax, MAX_ANGLE_TOP)  # smallest maximum bound
-
-    if value < 0:
-        return _interpolate(-1, value, 0, finalMin, CENTER_ANGLE_TOP)
+    if value < CENTER_VALUE_TOP:
+        return _interpolate(MIN_VALUE_TOP, value, CENTER_VALUE_TOP, MIN_ANGLE_TOP, CENTER_ANGLE_TOP)
     else:
-        return _interpolate(0, value, 1, CENTER_ANGLE_TOP, finalMax)
+        return _interpolate(CENTER_VALUE_TOP, value, MAX_VALUE_TOP, CENTER_ANGLE_TOP, MAX_ANGLE_TOP)
+
+
+def get_angle_value(coefficient):
+    """
+    :param value: A float between -1 and 1 indicating the direction and magnitude of the turn.
+    :return: Returns the valid angle corresponding to the value between -1 and 1
+    """
+    if coefficient < 1:
+        return _interpolate(-1, coefficient, 0, _angle_to_value(MIN_ANGLE, True), CENTER_VALUE_TOP)
+    else:
+        return _interpolate(0, coefficient, 1, CENTER_VALUE_TOP, _angle_to_value(MAX_ANGLE, True))
 
 
 def calculate_angle(velocity, angleValue):
@@ -84,14 +95,17 @@ def calculate_angle(velocity, angleValue):
         return {"wheels": ((velocity, velocity, velocity), (velocity, velocity, velocity)),
                 "joints": (CENTER_VALUE_TOP, CENTER_VALUE_BOTTOM)}
 
-    if angleValue < -1:
-        print("Angle given {} smaller than minimum angle of {}".format(angleValue, -1))
-        print("Angle set to {}".format(-1))
-        angleValue = -1
-    elif angleValue > 1:
-        print("Angle given {} larger than maximum angle of {}".format(angleValue, 1))
-        print("Angle set to {}".format(1))
-        angleValue = 1
+    minValue = _angle_to_value(MIN_ANGLE, True)
+    maxValue = _angle_to_value(MAX_ANGLE, True)
+
+    if angleValue < minValue:
+        print("Angle given {} smaller than minimum angle of {}".format(angleValue, minValue))
+        print("Angle set to {}".format(minValue))
+        angleValue = minValue
+    elif angleValue > maxValue:
+        print("Angle given {} larger than maximum angle of {}".format(angleValue, maxValue))
+        print("Angle set to {}".format(maxValue))
+        angleValue = maxValue
 
     a = _value_to_angle(angleValue)
     if a < pi / 2:
@@ -121,6 +135,9 @@ def calculate_angle(velocity, angleValue):
     mr = v * (1 - ARM_MID_RIGHT / (SPINE_TOP * tan(a)))
     bl = v * (SPINE_BOTTOM / (SPINE_TOP * tan(a) * cos(a2)) + ARM_BOTTOM_LEFT / (SPINE_TOP * tan(a)))
     br = v * (SPINE_BOTTOM / (SPINE_TOP * tan(a) * cos(a2)) - ARM_BOTTOM_RIGHT / (SPINE_TOP * tan(a)))
+
+    tl, tr, ml, mr, bl, br, = map(int, (tl, tr, ml, mr, bl, br))
+    a, a2 = map(int, (a, a2))
 
     return {"wheels": ((tl, ml, bl), (tr, mr, br)),
             "joints": (_angle_to_value(a, True), _angle_to_value(a2, False))}

@@ -1,6 +1,7 @@
 from wheel_velocity import calculate_angle, get_angle_value
 import dynamixel
 import config
+import threading
 
 # TODO better name pls
 # Make negative velocities into correct corresponding positive one
@@ -64,10 +65,20 @@ class Mantis(object):
                 # actuator.goal_position = 512
             else:
                 print '    Something is wrong'
+        self.net.synchronize()
 
         # Some state information of the Mantis robot
         self.moveVel = 0
         self.skidVel = 0
+
+        # Start the scheduled synchronize every 0.5 seconds
+        t = threading.Timer(0.5, self.synchronize)
+        t.start()
+
+    def synchronize(self):
+        self.net.synchronize()
+        t = threading.Timer(0.5, self.synchronize)
+        t.start()
 
     def move(self, velocity, skid):
         """
@@ -92,8 +103,6 @@ class Mantis(object):
             actuator = self.net[servo[0]]
             actuator.moving_speed = _reverse(servo[1] + self.skidVel)
 
-        self.net.synchronize()
-
     def turn(self, angle, velocity):
         """Given an angle between -1 and 1, turn to that angle"""
         # Front joint turning
@@ -112,8 +121,6 @@ class Mantis(object):
             actuator.moving_speed = velocity
             actuator.goal_position = get_angle_value(-angle)
 
-        self.net.synchronize()
-
     def lift(self, angle, velocity):
         """Given an angle between -1 and 1, lift to that angle"""
         actuator = net[config.joints[1]]
@@ -122,5 +129,3 @@ class Mantis(object):
         else:
             actuator.moving_speed = velocity
             actuator.goal_position = 412 if angle < 0 else 652 # TODO arbitrary - linearly interpolate also
-
-        self.net.synchronize()

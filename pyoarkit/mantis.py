@@ -116,7 +116,7 @@ class Mantis(object):
 
     def lift(self, angle, velocity):
         """Given an angle between -1 and 1, lift to that angle"""
-        actuator = net[config.joints[1]]
+        actuator = self.net[config.joints[1]]
         if velocity == 0:
             actuator.stop()
         else:

@@ -1,3 +1,12 @@
+"""
+A sample interface which uses the pyoarkit library.
+This interface involves a very simple command system:
+    <command><value>
+where <command> is a single letter and <value> is some number.
+
+For example: v200 sets the velocity to 200.
+"""
+
 from pyoarkit import Mantis
 
 robot = Mantis()

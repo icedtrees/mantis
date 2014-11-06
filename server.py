@@ -1,5 +1,10 @@
+"""
+A UDP server designed to be run on the robot (Raspberry Pi or similar)
+and uses the sample interface.py system
+"""
+
 import SocketServer
-import test
+import interface
 
 
 class MyUDPHandler(SocketServer.BaseRequestHandler):

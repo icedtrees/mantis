@@ -1,3 +1,7 @@
+"""
+A high level API to control the Mantis robot (Open Academic Robot)
+"""
+
 from wheel_velocity import calculate_angle, get_angle_value
 import dynamixel
 import config

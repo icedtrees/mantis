@@ -121,9 +121,6 @@ def calculate_angle(velocity, angleValue):
     else:
         a2 = pi - atan(tan(pi - a) * SPINE_TOP / SPINE_BOTTOM)
 
-    print("a is {}".format(a))
-    print("a2 is {}".format(a2))
-
     if angleValue < 0:
         maxVelocity = MAX_WHEEL_VELOCITY * (130 * tan(a) / (SPINE_BOTTOM / cos(a2) + ARM_BOTTOM_LEFT))
     else:

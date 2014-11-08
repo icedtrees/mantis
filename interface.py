@@ -26,12 +26,12 @@ def execute_command(cmd):
         # Turn
         vel = int(float(cmd[1:]))
         
-        robot.turn(1 if vel > 0 else -1, vel)
+        robot.turn(1 if vel > 0 else -1, abs(vel))
     elif cmd[0] == 'l':
         # Lift
         vel = int(float(cmd[1:]))
         
-        robot.lift(1 if vel > 0 else -1, vel)
+        robot.lift(1 if vel > 0 else -1, abs(vel))
     elif cmd[0] == 'T':
         # Turn
         position = float(cmd[1:])
@@ -49,5 +49,6 @@ def execute_command(cmd):
     	robot.move(0, True)
     	robot.move(0, False)
 
-while True:
-	execute_command(raw_input())
+if __name__ == "__main__":
+    while True:
+	    execute_command(raw_input())

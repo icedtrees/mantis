@@ -63,25 +63,40 @@ class Mantis(object):
                 actuator.cw_angle_limit = 0
                 actuator.ccw_angle_limit = 1023
                 # actuator.moving_speed = 100
-                # actuator.torque_enable = True
-                # actuator.torque_limit = 800 
-                # actuator.max_torque = 800
+                actuator.torque_enable = True
+                actuator.torque_limit = 800 
+                actuator.max_torque = 800
                 # actuator.goal_position = 512
             else:
                 print '    Something is wrong'
-        self.net.synchronize()
 
         # Some state information of the Mantis robot
         self.moveVel = 0
         self.skidVel = 0
+        self.currentAngle = self.net[config.joints[0]].current_position
+        self.turnStopped = False
+        self.liftStopped = False
 
         # Start the scheduled synchronize every 0.5 seconds
-        t = threading.Timer(0.5, self.synchronize)
-        t.start()
+        self.synchronize()
 
     def synchronize(self):
+        print("synchronizing")
+        self.currentAngle = self.net[config.joints[0]].current_position
+        if self.turnStopped:
+            actuatorFront = self.net[config.joints[0]]
+            actuatorRear = self.net[config.joints[2]]
+
+            actuatorFront.goal_position = self.currentAngle
+            actuatorFront.moving_speed = 1
+            actuatorRear.stop()
+            self.turnStopped = False
+        if self.liftStopped:
+            actuator = self.net[config.joints[1]]
+            actuator.stop()
+            self.liftStopped = False
         self.net.synchronize()
-        t = threading.Timer(0.5, self.synchronize)
+        t = threading.Timer(0.2, self.synchronize)
         t.start()
 
     def move(self, velocity, skid):
@@ -95,7 +110,7 @@ class Mantis(object):
             self.moveVel = velocity
 
         # Calculate the speed differential between left and right wheels, take angle from front joint
-        data = calculate_angle(self.moveVel, self.net[config.joints[0]].current_position)
+        data = calculate_angle(self.moveVel, self.currentAngle)
 
         # Set moving speed of wheels
         for servo in zip(config.wheels[0], data['wheels'][0]): # Left wheels
@@ -110,26 +125,23 @@ class Mantis(object):
     def turn(self, angle, velocity):
         """Given an angle between -1 and 1, turn to that angle"""
         # Front joint turning
-        actuator = self.net[config.joints[0]]
-        if velocity == 0:
-            actuator.stop()
-        else:
-            actuator.moving_speed = velocity
-            actuator.goal_position = get_angle_value(angle)
-
+        actuatorFront = self.net[config.joints[0]]
         # Rear joint turning
-        actuator = self.net[config.joints[2]]
+        actuatorRear = self.net[config.joints[2]]
+
         if velocity == 0:
-            actuator.stop()
+            self.turnStopped = True
         else:
-            actuator.moving_speed = velocity
-            actuator.goal_position = get_angle_value(-angle)
+            actuatorFront.moving_speed = velocity
+            actuatorFront.goal_position = get_angle_value(angle)
+            actuatorRear.moving_speed = velocity
+            actuatorRear.goal_position = calculate_angle(self.moveVel, get_angle_value(angle))["joints"][1]
 
     def lift(self, angle, velocity):
         """Given an angle between -1 and 1, lift to that angle"""
         actuator = self.net[config.joints[1]]
         if velocity == 0:
-            actuator.stop()
+            self.liftStopped = True
         else:
             actuator.moving_speed = velocity
             actuator.goal_position = 412 if angle < 0 else 652 # TODO arbitrary - linearly interpolate also

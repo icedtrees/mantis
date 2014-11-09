@@ -30,14 +30,14 @@ def joy_move(data):
     if reset:
         # Reset servos to starting positions and stops the robot
         for command in ("T0", "L0", "s0", "v0"):
-            joy_move.sock.sendto(command + "\n", (joy_move.host, joy_move.port))
+            joy_move.sock.sendall(command + "\n")
     else:
         commands = {"s": int(skid * MAX_SKID_VELOCITY),
                     "v": int(velocity * MAX_FORWARD_VELOCITY),
                     "t": int(turn * MAX_TURN_VELOCITY),
                     "l": int(lift * MAX_LIFT_VELOCITY)}
         for command, value in commands.items():
-            joy_move.sock.sendto("{}{}\n".format(command, value), (joy_move.host, joy_move.port))
+            joy_move.sock.sendall("{}{}\n".format(command, value))
 
     print data
 
@@ -51,7 +51,8 @@ def main():
         exit(1)
 
     # create the socket
-    joy_move.sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+    joy_move.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    joy_move.sock.connect((joy_move.host, joy_move.port))
 
     # initialise the subscriber
     controller = rospy.Subscriber('joy', Joy, joy_move)

@@ -1,5 +1,5 @@
 """
-A UDP server designed to be run on the robot (Raspberry Pi or similar)
+A TCP server designed to be run on the robot (Raspberry Pi or similar)
 and uses the sample interface.py system
 """
 
@@ -9,9 +9,9 @@ import SocketServer
 import interface
 
 
-class MyUDPHandler(SocketServer.BaseRequestHandler):
+class MyTCPHandler(SocketServer.BaseRequestHandler):
     def handle(self):
-        command = self.request[0].strip()
+        command = self.request.recv(1024).strip()
         interface.execute_command(command)
 
 if __name__ == "__main__":
@@ -20,5 +20,5 @@ if __name__ == "__main__":
     except IndexError:
         print("Usage: {} port".format(sys.argv[0]))
         exit(1)
-    server = SocketServer.UDPServer((host, port), MyUDPHandler)
+    server = SocketServer.TCPServer((host, port), MyTCPHandler)
     server.serve_forever()

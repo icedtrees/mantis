@@ -7,7 +7,7 @@ import dynamixel
 import config
 import threading
 
-# TODO better name pls
+
 # Make negative velocities into correct corresponding positive one
 def _fix_vel(vel):
     if vel <= -2048:
@@ -21,12 +21,14 @@ def _fix_vel(vel):
     else:
         return vel
 
+
 def _reverse(vel):
     vel = _fix_vel(vel)
     if vel < 1024:
         return vel + 1024
     elif vel >= 1024:
         return vel - 1024
+
 
 class Mantis(object):
     def __init__(self):
@@ -71,8 +73,8 @@ class Mantis(object):
                 print '    Something is wrong'
 
         # Some state information of the Mantis robot
-        self.moveVel = 0
-        self.skidVel = 0
+        self.moveVelocity = 0
+        self.skidVelocity = 0
         self.currentAngle = self.net[config.joints[0]].current_position
         self.turnStopped = False
         self.liftStopped = False
@@ -82,6 +84,19 @@ class Mantis(object):
 
     def synchronize(self):
         print("synchronizing")
+        # Calculate the speed differential between left and right wheels, take angle from front joint
+        data = calculate_angle(self.moveVelocity, self.currentAngle)
+
+        # Set moving speed of wheels
+        for servo in zip(config.wheels[0], data['wheels'][0]): # Left wheels
+            # Servo is a tuple (id, vel)
+            actuator = self.net[servo[0]]
+            actuator.moving_speed = _fix_vel(servo[1] - self.skidVelocity)
+        for servo in zip(config.wheels[1], data['wheels'][1]): # Right wheels
+            # Servo is a tuple (id, vel)
+            actuator = self.net[servo[0]]
+            actuator.moving_speed = _reverse(servo[1] + self.skidVelocity)
+
         self.currentAngle = self.net[config.joints[0]].current_position
         if self.turnStopped:
             actuatorFront = self.net[config.joints[0]]
@@ -100,31 +115,28 @@ class Mantis(object):
         t.start()
         # print("finished synchronizing")
 
-    def move(self, velocity, skid=False):
+    def move(self, velocity):
         """
-        Given a velocity, move at that velocity. If skid is true, this sets the skid
-        steering velocity.
+        Given a velocity, move at that velocity.
         """
-        if skid:
-            self.skidVel = velocity
+        self.moveVelocity = velocity
+
+    def skid(self, velocity):
+        """
+        Given a velocity, add a skid steering velocity to the current velocity
+        """
+        self.skidVelocity = velocity
+
+    def turn(self, velocity):
+        """
+        Turn in a certain direction indicated by the velocity
+        """
+        if velocity > 0:
+            self.turn_to(1, velocity)
         else:
-            self.moveVel = velocity
+            self.turn_to(-1, -velocity)
 
-        # Calculate the speed differential between left and right wheels, take angle from front joint
-        data = calculate_angle(self.moveVel, self.currentAngle)
-
-        # Set moving speed of wheels
-        for servo in zip(config.wheels[0], data['wheels'][0]): # Left wheels
-            # Servo is a tuple (id, vel)
-            actuator = self.net[servo[0]]
-            actuator.moving_speed = _fix_vel(servo[1] - self.skidVel)
-        for servo in zip(config.wheels[1], data['wheels'][1]): # Right wheels
-            # Servo is a tuple (id, vel)
-            actuator = self.net[servo[0]]
-            actuator.moving_speed = _reverse(servo[1] + self.skidVel)
-
-
-    def turn(self, angle, velocity):
+    def turn_to(self, angle, velocity=50):
         """Given an angle between -1 and 1, turn to that angle"""
         # Front joint turning
         actuatorFront = self.net[config.joints[0]]
@@ -137,9 +149,18 @@ class Mantis(object):
             actuatorFront.moving_speed = velocity
             actuatorFront.goal_position = get_angle_value(angle)
             actuatorRear.moving_speed = velocity
-            actuatorRear.goal_position = calculate_angle(self.moveVel, get_angle_value(angle))["joints"][1]
+            actuatorRear.goal_position = calculate_angle(self.moveVelocity, get_angle_value(angle))["joints"][1]
 
-    def lift(self, angle, velocity):
+    def lift(self, velocity):
+        """
+        Lift at a constant velocity, which can be positive or negative depending on the direction of the lift
+        """
+        if velocity > 0:
+            self.lift_to(1, velocity)
+        else:
+            self.lift_to(-1, -velocity)
+
+    def lift_to(self, angle, velocity=50):
         """Given an angle between -1 and 1, lift to that angle"""
         actuator = self.net[config.joints[1]]
         if velocity == 0:

@@ -50,14 +50,17 @@ def main():
         print("Usage: {} server port".format(sys.argv[0]))
         exit(1)
 
-    # create the socket
-    joy_move.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    joy_move.sock.connect((joy_move.host, joy_move.port))
+    try:
+        # create the socket
+        joy_move.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        joy_move.sock.connect((joy_move.host, joy_move.port))
 
-    # initialise the subscriber
-    controller = rospy.Subscriber('joy', Joy, joy_move)
-    rospy.init_node('controller', anonymous=True)
-    rospy.spin()
+        # initialise the subscriber
+        controller = rospy.Subscriber('joy', Joy, joy_move)
+        rospy.init_node('controller', anonymous=True)
+        rospy.spin()
+    finally:
+        joy_move.sock.close()
 
 
 if __name__ == "__main__":

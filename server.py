@@ -11,8 +11,11 @@ import interface
 
 class MyTCPHandler(SocketServer.BaseRequestHandler):
     def handle(self):
-        command = self.request.recv(1024).strip()
-        interface.execute_command(command)
+        command = True
+        while command:
+            command = self.request.recv(1024).strip()
+            for c in command.splitlines():
+                interface.execute_command(c)
 
 if __name__ == "__main__":
     try:

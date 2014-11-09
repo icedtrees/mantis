@@ -32,8 +32,13 @@ SPINE_BOTTOM = 120.0
 MAX_WHEEL_VELOCITY = 1023.0
 
 # angular limits
-_topMin = atan(tan(MIN_ANGLE_BOTTOM) * SPINE_BOTTOM / SPINE_TOP)
-_topMax = pi - atan(tan(pi - MAX_ANGLE_BOTTOM) * SPINE_BOTTOM / SPINE_TOP)
+_topMin = atan(tan(MAX_ANGLE_BOTTOM) * SPINE_BOTTOM / SPINE_TOP)
+_topMax = pi - atan(tan(pi - MIN_ANGLE_BOTTOM) * SPINE_BOTTOM / SPINE_TOP)
+
+print("topmin is {}".format(_topMin))
+print("topmax is {}".format(_topMax))
+print("MIN_ANGLE_TOP is {}".format(MIN_ANGLE_TOP))
+print("MAX_ANGLE_TOP is {}".format(MAX_ANGLE_TOP))
 
 MIN_ANGLE = max(_topMin, MIN_ANGLE_TOP)  # largest minimum bound
 MAX_ANGLE = min(_topMax, MAX_ANGLE_TOP)  # smallest maximum bound
@@ -72,11 +77,9 @@ def get_angle_value(coefficient):
     :return: Returns the valid angle corresponding to the value between -1 and 1
     """
     if coefficient > 1:
-        print("Coefficient is higher than 1. Changing to 1")
-        coefficient = 1
+        raise ValueError("Coefficient given for angle is higher than 1")
     elif coefficient < -1:
-        print("Coefficient is lower than -1. Changing to -1")
-        coefficient = -1
+        raise ValueError("Coefficient given for angle is lower than -1")
     if coefficient < 0:
         return int(_interpolate(-1, coefficient, 0, _angle_to_value(MIN_ANGLE, True), CENTER_VALUE_TOP))
     else:
@@ -128,10 +131,7 @@ def calculate_angle(velocity, angleValue):
     maxVelocity -= 10  # for safety
 
     if abs(velocity) > maxVelocity:
-        print("{} exceeds max velocity {} for angle {}".format(abs(velocity), maxVelocity, angleValue))
-        print("Velocity is being set to {}".format(maxVelocity))
-        sign = velocity / abs(velocity)
-        v = sign * maxVelocity
+        raise ValueError("{} exceeds max velocity {} for angle {}".format(abs(velocity), maxVelocity, angleValue))
     else:
         v = velocity
 

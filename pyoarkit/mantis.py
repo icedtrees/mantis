@@ -83,7 +83,6 @@ class Mantis(object):
         self.synchronize()
 
     def synchronize(self):
-        print("synchronizing")
         # Calculate the speed differential between left and right wheels, take angle from front joint
         data = calculate_angle(self.moveVelocity, self.currentAngle)
 

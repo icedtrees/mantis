@@ -50,5 +50,6 @@ def execute_command(cmd):
     	robot.move(0, False)
 
 if __name__ == "__main__":
+    # Testing function. Type in commands
     while True:
 	    execute_command(raw_input())

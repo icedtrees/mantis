@@ -98,8 +98,9 @@ class Mantis(object):
         self.net.synchronize()
         t = threading.Timer(0.2, self.synchronize)
         t.start()
+        # print("finished synchronizing")
 
-    def move(self, velocity, skid):
+    def move(self, velocity, skid=False):
         """
         Given a velocity, move at that velocity. If skid is true, this sets the skid
         steering velocity.
@@ -121,6 +122,7 @@ class Mantis(object):
             # Servo is a tuple (id, vel)
             actuator = self.net[servo[0]]
             actuator.moving_speed = _reverse(servo[1] + self.skidVel)
+
 
     def turn(self, angle, velocity):
         """Given an angle between -1 and 1, turn to that angle"""

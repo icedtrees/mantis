@@ -1,44 +1,32 @@
-from math import sin, cos, tan, atan, pi, radians
+from math import sin, cos, tan, atan, pi
 
-# angles for top axle
-CENTER_VALUE_TOP = 512.0 - 10.0  # 90 degrees
-CENTER_ANGLE_TOP = radians(90.0)
-MIN_VALUE_TOP = 512.0 - 110.0  # 65 degrees
-MIN_ANGLE_TOP = radians(65.0)
-MAX_VALUE_TOP = 512.0 + 100.0  # 115 degrees
-MAX_ANGLE_TOP = radians(115.0)
-
-# angles for bottom axle
-CENTER_VALUE_BOTTOM = 512.0 + 10.0  # 90 degrees
-CENTER_ANGLE_BOTTOM = radians(90.0)
-MIN_VALUE_BOTTOM = 512.0 - 60.0  # 110 degrees
-MIN_ANGLE_BOTTOM = radians(110.0)  # note min value gives a corresponding larger angle
-MAX_VALUE_BOTTOM = 512.0 + 90.0  # 70 degrees
-MAX_ANGLE_BOTTOM = radians(70.0)
-
-# lengths of arms (mm)
-ARM_TOP_LEFT = 91.0
-ARM_TOP_RIGHT = 91.0
-ARM_MID_LEFT = 95.0
-ARM_MID_RIGHT = 95.0
-ARM_BOTTOM_LEFT = 91.0
-ARM_BOTTOM_RIGHT = 91.0
-
-# lengths of spine (mm)
-SPINE_TOP = 130.0
-SPINE_BOTTOM = 120.0
-
-# max velocity of any given wheel
-MAX_WHEEL_VELOCITY = 1023.0
+from config import (
+    CENTER_VALUE_TOP,
+    CENTER_ANGLE_TOP,
+    MIN_VALUE_TOP,
+    MIN_ANGLE_TOP,
+    MAX_VALUE_TOP,
+    MAX_ANGLE_TOP,
+    CENTER_VALUE_BOTTOM,
+    CENTER_ANGLE_BOTTOM,
+    MIN_VALUE_BOTTOM,
+    MIN_ANGLE_BOTTOM,
+    MAX_VALUE_BOTTOM,
+    MAX_ANGLE_BOTTOM,
+    ARM_TOP_LEFT,
+    ARM_TOP_RIGHT,
+    ARM_MID_LEFT,
+    ARM_MID_RIGHT,
+    ARM_BOTTOM_LEFT,
+    ARM_BOTTOM_RIGHT,
+    SPINE_TOP,
+    SPINE_BOTTOM,
+    MAX_WHEEL_VELOCITY,
+)
 
 # angular limits
 _topMin = atan(tan(MAX_ANGLE_BOTTOM) * SPINE_BOTTOM / SPINE_TOP)
 _topMax = pi - atan(tan(pi - MIN_ANGLE_BOTTOM) * SPINE_BOTTOM / SPINE_TOP)
-
-print("topmin is {}".format(_topMin))
-print("topmax is {}".format(_topMax))
-print("MIN_ANGLE_TOP is {}".format(MIN_ANGLE_TOP))
-print("MAX_ANGLE_TOP is {}".format(MAX_ANGLE_TOP))
 
 MIN_ANGLE = max(_topMin, MIN_ANGLE_TOP)  # largest minimum bound
 MAX_ANGLE = min(_topMax, MAX_ANGLE_TOP)  # smallest maximum bound

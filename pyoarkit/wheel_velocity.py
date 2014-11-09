@@ -1,4 +1,4 @@
-from math import sin, cos, tan, atan, pi, ceil, floor
+from math import sin, cos, tan, atan, pi
 
 from config import (
     CENTER_VALUE_TOP,
@@ -28,8 +28,8 @@ from config import (
 _topMin = atan(tan(MAX_ANGLE_BOTTOM) * SPINE_BOTTOM / SPINE_TOP)
 _topMax = pi - atan(tan(pi - MIN_ANGLE_BOTTOM) * SPINE_BOTTOM / SPINE_TOP)
 
-MIN_ANGLE = ceil(max(_topMin, MIN_ANGLE_TOP))  # largest minimum bound
-MAX_ANGLE = floor(min(_topMax, MAX_ANGLE_TOP))  # smallest maximum bound
+MIN_ANGLE = max(_topMin, MIN_ANGLE_TOP)  # largest minimum bound
+MAX_ANGLE = min(_topMax, MAX_ANGLE_TOP)  # smallest maximum bound
 
 
 def _interpolate(minSource, source, maxSource, minDest, maxDest):

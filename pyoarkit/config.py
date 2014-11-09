@@ -44,3 +44,8 @@ SPINE_BOTTOM = 120.0
 
 # max velocity of any given wheel
 MAX_WHEEL_VELOCITY = 1023.0
+
+# limits for lift
+MIN_LIFT_VALUE = 412
+CENTER_LIFT_VALUE = 512
+MAX_LIFT_VALUE = 652

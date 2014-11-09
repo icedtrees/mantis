@@ -2,7 +2,7 @@
 A high level API to control the Mantis robot (Open Academic Robot)
 """
 
-from wheel_velocity import calculate_angle, get_angle_value
+from wheel_velocity import calculate_angle, get_angle_value, _interpolate as interpolate
 import dynamixel
 import config
 import threading
@@ -167,4 +167,10 @@ class Mantis(object):
             self.liftStopped = True
         else:
             actuator.moving_speed = velocity
-            actuator.goal_position = 412 if angle < 0 else 652 # TODO arbitrary - linearly interpolate also
+            if angle > 0:
+                actuator.goal_position = int(interpolate(0, angle, 1, config.CENTER_LIFT_VALUE, config.MAX_LIFT_VALUE))
+            else:
+                actuator.goal_position = int(interpolate(-1, angle, 0, config.MIN_LIFT_VALUE, config.CENTER_LIFT_VALUE))
+
+
+

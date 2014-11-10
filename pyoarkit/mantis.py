@@ -79,10 +79,26 @@ class Mantis(object):
         self.turnStopped = False
         self.liftStopped = False
 
-        # Start the scheduled synchronize every 0.5 seconds
-        self.synchronize()
+        # Start the scheduled synchronize every 0.2 seconds
+        self.synchronize(0.2)
 
-    def synchronize(self):
+    def synchronize(self, delay):
+        """
+        This function is called continuously and performs the following functions:
+            - Given the moveVelocity and skidVelocity, it writes the correct
+              speeds to each of the wheels
+            - Updates the currentAngle variable
+            - Checks the turnStopped and liftStopped variables, and stops turning
+              and lifting respectively if they are true.
+              The reason we need to do this is because it is impossible to set
+              a moving speed of 0 for actuators - to stop them we must set their
+              goal_position to their current_position which cannot be done at a
+              high enough accuracy except in the synchronize function.
+
+        Note that this function is the only place that data is actually being written
+        to or read from the dynamixel network. This is to prevent issues with multiple
+        threads querying the dynamixels at the same time.
+        """
         # Calculate the speed differential between left and right wheels, take angle from front joint
         data = calculate_angle(self.moveVelocity, self.currentAngle)
 
@@ -110,7 +126,7 @@ class Mantis(object):
             actuator.stop()
             self.liftStopped = False
         self.net.synchronize()
-        t = threading.Timer(0.2, self.synchronize)
+        t = threading.Timer(delay, self.synchronize)
         t.start()
         # print("finished synchronizing")
 

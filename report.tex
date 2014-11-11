@@ -178,6 +178,9 @@ We weren't too worried about dropped packets (UDP does not guarantee delivery) b
   \item Incorrect report from the joystick itself
 \end{enumerate}
 We tried changing our server and client to use TCP instead of UDP but the issue persisted. It also seems unlikely that there would be a hardware issue with the joystick or the joystick drivers but we were unable to verify this. A possible solution could be to try lowering the rate at which commands are sent to the dynamixels (currently every 0.2 seconds). However, this would likely introduce noticeable input delay.
+\\
+\\
+During the demonstration we experienced very heavy delays and commands on the joystick would frequently fail to register, especially lifting the front segment. However, after cleaning up and restructuring the code, subsequent testing found the system to be very responsive and unregistered commands were fairly rare. At this point it is unclear whether it was an issue with the code or a more congested wifi network.
 
 
 \section{References}

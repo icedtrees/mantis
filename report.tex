@@ -73,6 +73,42 @@ As a library was being made for use with the OARKit, both skid steering and arti
 \end{figure}
 Used ROS joystick driver to teleop and testing and blah (ref).
 
+\section{Materials and Components}
+The materials, components and tools required to assemble the robot include:
+\begin{itemize}
+  \item 3D printed robot chassis
+  \item 9 dynamixel AX-12 actuators with various length cables
+  \item Screws of suitable length
+  \item Raspberry Pi (model B or above) + wifi dongle
+  \item USB2Dynamixel adapter
+  \item 12V power source for the dynamixels
+  \item 5V power source for the Pi
+  \item \textit{Optional: soldering kit and heatshrink to properly splice a cable}
+\end{itemize}
+\subsection{Robot Chassis}
+Our chassis was printed with a Makerbot using PLA plastic. The printer was not particularly well calibrated and our parts were all a bit off. As a result, the assembly process was slightly more difficult but the overall result was acceptable.
+\\
+\\
+The main alternative to PLA plastic is ABS plastic. PLA plastic has a much lower melting point, which means that it may be subject to deformation if the dynamixel motors get too hot (the motors can heat up to 70 degrees celcius before shutting off). ABS plastic is stronger and generally favoured for more practical mechanical applications, but requires more complex printers with a heated bed. Both materials should be fine for use with the robot. http://www.protoparadigm.com/news-updates/the-difference-between-abs-and-pla-for-3d-printing/
+\\
+\\
+The wheels were also fully 3D printed, and one large issue is that they have very little grip on smooth surfaces such as wood. A possible solution is to coat the wheels in liquid/spray-on rubber. One such product is PlastiDip https://www.plastidip.net.au/
+
+\subsection{The Brain}
+We chose to use a Raspberry Pi to act as the brain of the robot controlling the 9 dynamixels. The Pi is powerful enough for simple applications, has a fairly small physical footprint and has USB ports to connect to the USB2Dynamixel.
+\\
+\\
+A model B or above is required because at least 2 USB ports are needed for the wifi dongle and the USB2Dynamixel.
+
+\subsection{Power Sources}
+The dynamixel motors accept 9-12V with a recommended voltage of 11.1V. http://support.robotis.com/en/product/dynamixel/ax_series/dxl_ax_actuator.htm
+We supplied it with a 12V power source via 8 AA batteries. A better alternative would be a 11 or 12V lithium-ion rechargable battery pack - this would be lighter, last longer and cheaper in the long run.
+\\
+\\
+The Raspberry Pi requires a steady 5V power source via a mini-USB connector. We opted to use an external battery pack meant for phones as a simple, rechargable power source. A much more compact solution is probably available //TODO research
+
+\section{Assembly Process}
+
 \section{Networking and Interface}
 It is crucial for the robot to be able to communicate over the network in some form, so that it can operate without being tethered to cables. The onboard Raspberry Pi and dynamixel motors are equipped with portable power sources, and a wifi dongle allows the Pi to communicate over a network over wifi.
 

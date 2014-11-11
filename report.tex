@@ -117,6 +117,17 @@ Our sample ROS node runs on a desktop or laptop and sends UDP messages to the se
 
 \subsubsection{Logitech Joystick}
 You should now be able to control the robot via the Logitech joystick. The control scheme is as follows:
+\\
+\\
+\begin{tabular}{ | l | p{7cm} | }
+\hline
+\textbf{Control} & \textbf{Description} \\ \hline
+Left joystick up and down & Moves the robot forwards and backwards. \\ \hline
+Left joystick left and right & Performs skid steering on the robot. \\ \hline
+Right joystick up and down & Raise and lower the front segment of the robot. \\ \hline
+Right joystick left and right & Turn the robot left and right. \\ \hline
+Hold Start button & Return the robot to the neutral position - turn to face forwards and raise/lower the front segment to be parallel to the ground. \\ \hline
+\end{tabular}
 
 \subsection{Design Decisions and Potential Issues}
 The main decision to make was to decide on the protocol used to send messages from the ROS node to the server on the Pi. We chose to use UDP over TCP or any other protocols because being able to control the robot in real time was a priority. There were potentially a lot of messages being sent very quickly when moving the joystick and using TCP could have caused some unwanted delay.

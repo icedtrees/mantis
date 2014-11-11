@@ -4,13 +4,13 @@
 \usepackage{listings}
 \usepackage{color}
 \usepackage{graphicx}
+\usepackage[T1]{fontenc}
 
 \definecolor{dkgreen}{rgb}{0,0.6,0}
 \definecolor{gray}{rgb}{0.5,0.5,0.5}
 \definecolor{mauve}{rgb}{0.58,0,0.82}
 
 \lstset{frame=tb,
-  language=Python,
   frame=none,
   basicstyle={\small\ttfamily},
   numbers=none,
@@ -70,6 +70,65 @@ As a library was being made for use with the OARKit, both skid steering and arti
 \\
 \\
 Used ROS joystick driver to teleop and testing and blah (ref).
+
+\section{Networking and Interface}
+It is crucial for the robot to be able to communicate over the network in some form, so that it can operate without being tethered to cables. The onboard Raspberry Pi and dynamixel motors are equipped with portable power sources, and a wifi dongle allows the Pi to communicate over a network over wifi.
+
+\subsection{A Sample Interface}
+We designed a sample interface to use the high level API functions provided by our pyOARKit library. Contained in interface.py, it can be run from the terminal and accepts input from the keyboard.
+\\
+\\
+The interface is very simple and involves text-based commands of the form <command><value> where <command> is a single letter and <value> is typically an integer or a float.
+\\
+\\
+\begin{tabular}{ | l | l | p{5cm} | }
+\hline
+\textbf{Syntax} & \textbf{Value Range} & \textbf{Description} \\ \hline
+v<velocity> & Integer from -1023 to 1023 & Sets the velocity - moves the robot forwards and backwards. \\ \hline
+s<velocity> & Integer from -1023 to 1023 & Skid steering - a positive value moves the right wheels forward and the rear wheels backwards. Can be used in conjunction with velocity setting. \\ \hline
+t<velocity> & Integer from -1023 to 1023 & Turn at the given velocity - a positive value turns left. \\ \hline
+l<velocity> & Integer from -1023 to 1023 & Lift the front segment up at the given velocity - a positive value lifts upwards \\ \hline
+T<angle> & Float from -1 to 1 & Turn to the given normalised angle at an arbitrary speed of 50. 1 is the extreme left and -1 is the extreme right while 0 is the centre position. \\ \hline
+L<angle> & Float from -1 to 1 & Lift to the given normalised angle at an arbitrary speed of 50. 1 is the maximum height and -1 is the minimum height while 0 is the centre position - flat. \\ \hline
+\end{tabular}
+
+\subsection{ROS Integration}
+We wanted integration with ROS in order to leverage the existing ecosystem of software and tools. Initially, the intention was to install ROS on the onboard Raspberry Pi but this proved to be complicated since ROS only officially targets Ubuntu. Running ROS as well as controlling the nine dynamixel motors on the Pi might also be difficult since the Pi (Model B+) only boasts 512mb of RAM and a 700MHz CPU.
+\\
+\\
+Instead, we decided to run a small UDP server on the Pi and run the ROS node on a desktop/laptop.
+
+\subsubsection{server.py}
+This is a small UDP server run on the Raspberry Pi and uses the sample interface.py. It accepts UDP messages which contain commands in the same format as the sample interface. From the Pi:
+\begin{lstlisting}[language=bash]
+  $ python server.py 9999 # Run the server on port 9999
+\end{lstlisting}
+
+\subsubsection{ROS Node}
+Our sample ROS node runs on a desktop or laptop and sends UDP messages to the server on the Pi based on input from a joystick. We used a logitech controller in our demo, but the code should be able to be easily adapted for other joysticks or similar teleop nodes. Ensure that the joystick is plugged in, and then:
+\begin{lstlisting}[language=bash]
+  $ sudo apt-get install ros-indigo-joystick-drivers # Make sure you have the joystick drivers
+  $ roslaunch logitech.launch
+
+  $ cd workspace
+  $ catkin_make
+  $ rosrun mantis move.py <ip_of_raspberry_pi> 9999 # Connect to the Pi on port 9999
+\end{lstlisting}
+
+\subsubsection{Logitech Joystick}
+You should now be able to control the robot via the Logitech joystick. The control scheme is as follows:
+
+\subsection{Design Decisions and Potential Issues}
+The main decision to make was to decide on the protocol used to send messages from the ROS node to the server on the Pi. We chose to use UDP over TCP or any other protocols because being able to control the robot in real time was a priority. There were potentially a lot of messages being sent very quickly when moving the joystick and using TCP could have caused some unwanted delay.
+\\
+\\
+We weren't too worried about dropped packets (UDP does not guarantee delivery) because our interface and library are mostly stateless. That is, subsequent commands are mutually exclusive and do not affect one another. At worst, it would just require inputting a particular command again. However, we did run into an issue where it was repeatedly observed that actions on the joystick sometimes would not register. We pinpointed the issue to a few potential sources:
+\begin{enumerate}
+  \item Dropping packets over the network
+  \item Congestion in the dynamixel network causing commands sent to the dynamixels to not take effect
+  \item Incorrect report from the joystick itself
+\end{enumerate}
+We tried changing our server and client to use TCP instead of UDP but the issue persisted. It also seems unlikely that there would be a hardware issue with the joystick or the joystick drivers but we were unable to verify this. A possible solution could be to try lowering the rate at which commands are sent to the dynamixels (currently every 0.2 seconds). However, this would likely introduce noticeable input delay.
 
 
 \section{References}

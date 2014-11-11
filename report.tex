@@ -187,6 +187,79 @@ We tried changing our server and client to use TCP instead of UDP but the issue 
 \\
 During the demonstration we experienced very heavy delays and commands on the joystick would frequently fail to register, especially lifting the front segment. However, after cleaning up and restructuring the code, subsequent testing found the system to be very responsive and unregistered commands were fairly rare. At this point it is unclear whether it was an issue with the code or a more congested wifi network.
 
+\section{Locomotion}
+The OARKit robot has a fairly rare design in which six wheels can turn relative to each other via two rotating joints, each with a range of about $\pm20$ degrees.
+\\
+\\
+figure goes here
+\\
+\\
+There have been similar studies into wheel velocities for similar vehicles, such as Shamah et al. (2001)'s calculations diagrammed above, but the OARKit robot is unique in that it has mobile joints rather than rotating axles, and it also has six wheels for better locomotion.
+\\
+\\
+We use similar calculations to Shamah et al., by definining a common intersection point for lines passing through all the axles, and using the distance between the wheel and the common intersection point to scale the relative velocity of the wheel.
+\\
+\\
+diagram goes here
+\\
+\\
+Since we have six wheels and not four, there are six different axles. Thus we must make sure that the back axle is angled such that the line extended inwards would intersect with the intersection of the front two axle lines.
+\\
+\\
+For $\theta_{front} > \frac{\pi}{2}$:
+\\
+$\theta_{back} = tan^{-1}(tan(\theta_{front}) \times \frac{spine_{top}}{spine_{bottom}})$
+\\
+\\
+For $\theta_{front} > \frac{\pi}{2}$:
+\\
+$\theta_{back} = \pi - tan^{-1}(tan(\pi - \theta_{front}) \times \frac{spine_{top}}{spine_{bottom}})$
+\\
+\\
+With the angle values of the top and bottom, we can thus define the relative velocities of all the wheels as the distances from the center point:
+\\
+\[ \omega_{topleft} \propto \frac{1}{sin(a)} + \frac{arm_{topleft}}{spine_{top} * tan(\theta_{top})} \]
+\[ \omega_{topright} \propto \frac{1}{sin(1)} - \frac{arm_{topright}}{spine_{top} * tan(\theta_{top})} \]
+\[ \omega_{middleleft} \propto 1 + \frac{arm_{midleft}}{spine_{top} * tan(\theta_{top})} \]
+\[ \omega_{middleleft} \propto 1 - \frac{arm_{midright}}{spine_{top} * tan(\theta_{top})} \]
+\[ \omega_{bottomleft} \propto \frac{spine_{bottom}}{spine_{top} * tan(\theta_{top}) * cos(\theta{bottom})} + \frac{arm_{bottomleft}}{spine_{top} * tan(\theta_{top})} \]
+\[ \omega_{bottomleft} \propto \frac{spine_{bottom}}{spine_{top} * tan(\theta_{top}) * cos(\theta{bottom})} - \frac{arm_{bottomright}}{spine_{top} * tan(\theta_{top})} \]
+\\
+\\
+We use this kind of articulated steering as the baseline velocity for all the wheels when the robot is at a certain inclination. Ideally this would cause all wheels to travel exactly at the correct tangential velocity.
+\\
+In our mantis library, we define the velocity of the vehicle $v$ as the tangential velocity of the center point of the middle axle (which is $spine_{top} * tan(\theta_{top})$ distance from the central intersection). We can multiply any of the above formulae by $v$ to obtain a velocity relative to the velocity of the center of the vehicle:
+\\
+\[ \omega_{topleft} = v * (\frac{1}{sin(a)} + \frac{arm_{topleft}}{spine_{top} * tan(\theta_{top})}) \]
+\[ \omega_{topright} = v * (\frac{1}{sin(1)} - \frac{arm_{topright}}{spine_{top} * tan(\theta_{top})}) \]
+\[ \omega_{middleleft} = v * (1 + \frac{arm_{midleft}}{spine_{top} * tan(\theta_{top})}) \]
+\[ \omega_{middleleft} = v * (1 - \frac{arm_{midright}}{spine_{top} * tan(\theta_{top})}) \]
+\[ \omega_{bottomleft} = v * (\frac{spine_{bottom}}{spine_{top} * tan(\theta_{top}) * cos(\theta{bottom})} + \frac{arm_{bottomleft}}{spine_{top} * tan(\theta_{top})}) \]
+\[ \omega_{bottomleft} = v * (\frac{spine_{bottom}}{spine_{top} * tan(\theta_{top}) * cos(\theta{bottom})} - \frac{arm_{bottomright}}{spine_{top} * tan(\theta_{top})}) \]
+\\
+This method of locomotion is quite efficient - the wheels are all synchronised fairly well, and there is little drag of the tyres on the ground. However, one can also add a skid steering velocity onto the wheels on each side, sacrificing efficiency to be able to perform a tighter turn.
+\\
+We implement this additively - there is a skid steering command available that will add a certain velocity to the wheels on each side of the robot, aiding turns greatly. For example, if a velocity of $2pi m/s$ was added to one side, and a velocity of $-2pi m/s$ was added to the other side, the vehicle would theoretically rotate at approximately $1 / radius$ revolutions per second along its current course, something not achievable with articulated steering. However, as mentioned before, since this is being performed on six wheels, there is a fair amount of drag between the wheels and the ground. This can be reduced by lifting up the front portion of the robot, so only four wheels are in contact with the ground.
+
+\subsection{Results}
+During our tests of the robot, we found that both methods of steering were effective on wood and carpet surfaces. The six-wheeled skid steering had some issues on the carpet because the wheels gripped the surface too hard, but if the front portion of the robot was lifted up, there were no resulting problems. Additionally, the skid steering was unreliable and caused the robot to rotate differing angular distances on different surfaces.
+\\
+However, the robot did also have the problem of not having enough grip. The wheels were constructed from ABS filament and had no coating, which means they had very little friction with the wooden surface and had some trouble performing maneuvers on sloped wooden surfaces, as it would slip down.
+\\
+It was also noted that it was quite possible to reliably execute tight turns on multiple surfaces by using common vehicle maneuvers, such as three-point turns, in conjunction with articulated steering.
+
+\subsection{Interface}
+We provide several interface functions in mantis.py that allow control of the robot with the designated steering system:
+\begin{itemize}
+    \item move(int -1023 to 1023): Move the robot at a given velocity (positive or negative). Path and direction is determined by current articulation.
+    \item skid(int -1023 to 1023): Add a skid steering velocity to the current movement.
+    \item turn\_to(int -1 to 1): Set the articulation to a given value between -1 (minimum articulation) and 1 (maximum articulation)
+    \item lift\_to(int -1 to 1): Set the lift of the front segment to a given value between -1 and 1.
+    \item turn(int -1023 to 1023): A convenience function that sets the robot to change its articulation at a certain speed until it reaches the maximum or minimum articulation.
+    \item lift(int -1023 to 1023): Same as above, except with the lifting joint.
+\end{itemize}
+
+We define multiple constants which refer to all the dimensions and maximum and minimum turning points for the servomotors. These can be found in pyoarkit/config.py
 
 \section{References}
 Bigge, R. (2011). \textit{Robots to the rescue}. Available at\\

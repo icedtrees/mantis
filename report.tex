@@ -4,13 +4,13 @@
 \usepackage{listings}
 \usepackage{color}
 \usepackage{graphicx}
+\usepackage[T1]{fontenc}
 
 \definecolor{dkgreen}{rgb}{0,0.6,0}
 \definecolor{gray}{rgb}{0.5,0.5,0.5}
 \definecolor{mauve}{rgb}{0.58,0,0.82}
 
 \lstset{frame=tb,
-  language=Python,
   frame=none,
   basicstyle={\small\ttfamily},
   numbers=none,
@@ -44,11 +44,15 @@ With this in mind, cost effective models with a high degree of flexibility were 
 The robot has been designed for compatibility with Dynamixel AX-12 servo motors. Several libraries currently exist for controlling the motors. Libraries written by Pablo Gindel, Savage Electronics and Scott Fergusson were looked into.
 \\
 \\
-Pablo Gindel has developed a C++ library for controlling the motors with an Arduino (Gindel, 2010). Ideally the number of components would be minimised to minimise cost and complexity. In order to achieve this, it was decided that a Raspberry Pi would directly interface with the servo motors and an Arduino would not be used. Additionally Gindel's library had several bugs and documentation was not written in English.
+Pablo Gindel has developed a C++ library for controlling the motors with an Arduino (Gindel, 2010). Ideally the number of components would be minimised to minimise cost and complexity. In order to achieve this, it was decided that preferably a Raspberry Pi would directly interface with the servo motors and an Arduino would not be used. Additionally Gindel's library had several bugs and documentation was not written in English.
 \\
 \\
-\textbf{REMOVE THIS
-Choice of library to control the dynamixel ax-12. Pablo Gindel - slightly outdated, with minor bugs, not english. Savage Electronics, again not english, requires extra hardware (ref, ref). Used pydynamixel by Scott Fergusson (ref). python cause easier to use with ROS.  Had to fix bugs}
+Similarly the Savage Electronics library was written in C++. It also is designed to work with an Arduino, but also requires additional hardware. Again, the documentation is not English.
+\\
+\\
+ForestMoon Dynamixel library by Scott Ferguson was originally written in C\#, which posed a problem as ROS is currently only implemented in C++, python and Java (Ferguson). Fortunately Patrick Goebel wrote a python version (Goebel, 2014). Ferguson's library is able to be used on a Raspberry Pi, and documentation is English, so it was chosen over the other options.
+\\
+TODO: discuss bug fixes done?
 \\
 \\
 There are several main methods of steering, each with their own advantages and disadvantages (Shamah et. al., 2001). By virtue of chassis design a range of steering options were unable to be implemented. These included ackerman, independent, synchronous or omnidirectional steering. The remaining options were skid steering and articulated drive.
@@ -67,9 +71,116 @@ As a library was being made for use with the OARKit, both skid steering and arti
 \includegraphics[width=\textwidth]{fig1}
 \caption{(Shamah et. al. 2001)}
 \end{figure}
-\\
-\\
 Used ROS joystick driver to teleop and testing and blah (ref).
+
+\section{Materials and Components}
+The materials, components and tools required to assemble the robot include:
+\begin{itemize}
+  \item 3D printed robot chassis
+  \item 9 dynamixel AX-12 actuators with various length cables
+  \item Screws of suitable length
+  \item Raspberry Pi (model B or above) + wifi dongle
+  \item USB2Dynamixel adapter
+  \item 12V power source for the dynamixels
+  \item 5V power source for the Pi
+  \item \textit{Optional: soldering kit and heatshrink to properly splice a cable}
+\end{itemize}
+\subsection{Robot Chassis}
+Our chassis was printed with a Makerbot using PLA plastic. The printer was not particularly well calibrated and our parts were all a bit off. As a result, the assembly process was slightly more difficult but the overall result was acceptable.
+\\
+\\
+The main alternative to PLA plastic is ABS plastic. PLA plastic has a much lower melting point, which means that it may be subject to deformation if the dynamixel motors get too hot (the motors can heat up to 70 degrees celcius before shutting off). ABS plastic is stronger and generally favoured for more practical mechanical applications, but requires more complex printers with a heated bed. Both materials should be fine for use with the robot. http://www.protoparadigm.com/news-updates/the-difference-between-abs-and-pla-for-3d-printing/
+\\
+\\
+The wheels were also fully 3D printed, and one large issue is that they have very little grip on smooth surfaces such as wood. A possible solution is to coat the wheels in liquid/spray-on rubber. One such product is PlastiDip https://www.plastidip.net.au/
+
+\subsection{The Brain}
+We chose to use a Raspberry Pi to act as the brain of the robot controlling the 9 dynamixels. The Pi is powerful enough for simple applications, has a fairly small physical footprint and has USB ports to connect to the USB2Dynamixel.
+\\
+\\
+A model B or above is required because at least 2 USB ports are needed for the wifi dongle and the USB2Dynamixel.
+
+\subsection{Power Sources}
+The dynamixel motors accept 9-12V with a recommended voltage of 11.1V. http://support.robotis.com/en/product/dynamixel/ax_series/dxl_ax_actuator.htm
+We supplied it with a 12V power source via 8 AA batteries. A better alternative would be a 11 or 12V lithium-ion rechargable battery pack - this would be lighter, last longer and cheaper in the long run.
+\\
+\\
+The Raspberry Pi requires a steady 5V power source via a mini-USB connector. We opted to use an external battery pack meant for phones as a simple, rechargable power source. A much more compact solution is probably available //TODO research
+
+\section{Assembly Process}
+
+\section{Networking and Interface}
+It is crucial for the robot to be able to communicate over the network in some form, so that it can operate without being tethered to cables. The onboard Raspberry Pi and dynamixel motors are equipped with portable power sources, and a wifi dongle allows the Pi to communicate over a network over wifi.
+
+\subsection{A Sample Interface}
+We designed a sample interface to use the high level API functions provided by our pyOARKit library. Contained in interface.py, it can be run from the terminal and accepts input from the keyboard.
+\\
+\\
+The interface is very simple and involves text-based commands of the form <command><value> where <command> is a single letter and <value> is typically an integer or a float.
+\\
+\\
+\begin{tabular}{ | l | l | p{5cm} | }
+\hline
+\textbf{Syntax} & \textbf{Value Range} & \textbf{Description} \\ \hline
+v<velocity> & Integer from -1023 to 1023 & Sets the velocity - moves the robot forwards and backwards. \\ \hline
+s<velocity> & Integer from -1023 to 1023 & Skid steering - a positive value moves the right wheels forward and the rear wheels backwards. Can be used in conjunction with velocity setting. \\ \hline
+t<velocity> & Integer from -1023 to 1023 & Turn at the given velocity - a positive value turns left. \\ \hline
+l<velocity> & Integer from -1023 to 1023 & Lift the front segment up at the given velocity - a positive value lifts upwards \\ \hline
+T<angle> & Float from -1 to 1 & Turn to the given normalised angle at an arbitrary speed of 50. 1 is the extreme left and -1 is the extreme right while 0 is the centre position. \\ \hline
+L<angle> & Float from -1 to 1 & Lift to the given normalised angle at an arbitrary speed of 50. 1 is the maximum height and -1 is the minimum height while 0 is the centre position - flat. \\ \hline
+\end{tabular}
+
+\subsection{ROS Integration}
+We wanted integration with ROS in order to leverage the existing ecosystem of software and tools. Initially, the intention was to install ROS on the onboard Raspberry Pi but this proved to be complicated since ROS only officially targets Ubuntu. Running ROS as well as controlling the nine dynamixel motors on the Pi might also be difficult since the Pi (Model B+) only boasts 512mb of RAM and a 700MHz CPU.
+\\
+\\
+Instead, we decided to run a small UDP server on the Pi and run the ROS node on a desktop/laptop.
+
+\subsubsection{server.py}
+This is a small UDP server run on the Raspberry Pi and uses the sample interface.py. It accepts UDP messages which contain commands in the same format as the sample interface. From the Pi:
+\begin{lstlisting}[language=bash]
+  $ python server.py 9999 # Run the server on port 9999
+\end{lstlisting}
+
+\subsubsection{ROS Node}
+Our sample ROS node runs on a desktop or laptop and sends UDP messages to the server on the Pi based on input from a joystick. We used a logitech controller in our demo, but the code should be able to be easily adapted for other joysticks or similar teleop nodes. Ensure that the joystick is plugged in, and then:
+\begin{lstlisting}[language=bash]
+  $ sudo apt-get install ros-indigo-joystick-drivers # Make sure you have the joystick drivers
+  $ roslaunch logitech.launch
+
+  $ cd workspace
+  $ catkin_make
+  $ rosrun mantis move.py <ip_of_raspberry_pi> 9999 # Connect to the Pi on port 9999
+\end{lstlisting}
+
+\subsubsection{Logitech Joystick}
+You should now be able to control the robot via the Logitech joystick. The control scheme is as follows:
+\\
+\\
+\begin{tabular}{ | l | p{7cm} | }
+\hline
+\textbf{Control} & \textbf{Description} \\ \hline
+Left joystick up and down & Moves the robot forwards and backwards. \\ \hline
+Left joystick left and right & Performs skid steering on the robot. \\ \hline
+Right joystick up and down & Raise and lower the front segment of the robot. \\ \hline
+Right joystick left and right & Turn the robot left and right. \\ \hline
+Hold Start button & Return the robot to the neutral position - turn to face forwards and raise/lower the front segment to be parallel to the ground. \\ \hline
+\end{tabular}
+
+\subsection{Design Decisions and Potential Issues}
+The main decision to make was to decide on the protocol used to send messages from the ROS node to the server on the Pi. We chose to use UDP over TCP or any other protocols because being able to control the robot in real time was a priority. There were potentially a lot of messages being sent very quickly when moving the joystick and using TCP could have caused some unwanted delay.
+\\
+\\
+We weren't too worried about dropped packets (UDP does not guarantee delivery) because our interface and library are mostly stateless. That is, subsequent commands are mutually exclusive and do not affect one another. At worst, it would just require inputting a particular command again. However, we did run into an issue where it was repeatedly observed that actions on the joystick sometimes would not register. We pinpointed the issue to a few potential sources:
+\begin{enumerate}
+  \item Dropping packets over the network
+  \item Congestion in the dynamixel network causing commands sent to the dynamixels to not take effect
+  \item Incorrect report from the joystick itself
+\end{enumerate}
+We tried changing our server and client to use TCP instead of UDP but the issue persisted. It also seems unlikely that there would be a hardware issue with the joystick or the joystick drivers but we were unable to verify this. A possible solution could be to try lowering the rate at which commands are sent to the dynamixels (currently every 0.2 seconds). However, this would likely introduce noticeable input delay.
+\\
+\\
+During the demonstration we experienced very heavy delays and commands on the joystick would frequently fail to register, especially lifting the front segment. However, after cleaning up and restructuring the code, subsequent testing found the system to be very responsive and unregistered commands were fairly rare. At this point it is unclear whether it was an issue with the code or a more congested wifi network.
 
 \section{Locomotion}
 The OARKit robot has a fairly rare design in which six wheels can turn relative to each other via two rotating joints, each with a range of about $\pm20$ degrees.

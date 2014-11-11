@@ -1,8 +1,0 @@
-prefix=/home/icedtrees/mantis/workspace/install
-
-Name: mantis
-Description: Description of mantis
-Version: 0.0.0
-Cflags: 
-Libs: -L/home/icedtrees/mantis/workspace/install/lib 
-Requires: 

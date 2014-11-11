@@ -44,11 +44,15 @@ With this in mind, cost effective models with a high degree of flexibility were 
 The robot has been designed for compatibility with Dynamixel AX-12 servo motors. Several libraries currently exist for controlling the motors. Libraries written by Pablo Gindel, Savage Electronics and Scott Fergusson were looked into.
 \\
 \\
-Pablo Gindel has developed a C++ library for controlling the motors with an Arduino (Gindel, 2010). Ideally the number of components would be minimised to minimise cost and complexity. In order to achieve this, it was decided that a Raspberry Pi would directly interface with the servo motors and an Arduino would not be used. Additionally Gindel's library had several bugs and documentation was not written in English.
+Pablo Gindel has developed a C++ library for controlling the motors with an Arduino (Gindel, 2010). Ideally the number of components would be minimised to minimise cost and complexity. In order to achieve this, it was decided that preferably a Raspberry Pi would directly interface with the servo motors and an Arduino would not be used. Additionally Gindel's library had several bugs and documentation was not written in English.
 \\
 \\
-\textbf{REMOVE THIS
-Choice of library to control the dynamixel ax-12. Pablo Gindel - slightly outdated, with minor bugs, not english. Savage Electronics, again not english, requires extra hardware (ref, ref). Used pydynamixel by Scott Fergusson (ref). python cause easier to use with ROS.  Had to fix bugs}
+Similarly the Savage Electronics library was written in C++. It also is designed to work with an Arduino, but also requires additional hardware. Again, the documentation is not English.
+\\
+\\
+ForestMoon Dynamixel library by Scott Ferguson was originally written in C\#, which posed a problem as ROS is currently only implemented in C++, python and Java (Ferguson). Fortunately Patrick Goebel wrote a python version (Goebel, 2014). Ferguson's library is able to be used on a Raspberry Pi, and documentation is English, so it was chosen over the other options.
+\\
+TODO: discuss bug fixes done?
 \\
 \\
 There are several main methods of steering, each with their own advantages and disadvantages (Shamah et. al., 2001). By virtue of chassis design a range of steering options were unable to be implemented. These included ackerman, independent, synchronous or omnidirectional steering. The remaining options were skid steering and articulated drive.
@@ -67,8 +71,6 @@ As a library was being made for use with the OARKit, both skid steering and arti
 \includegraphics[width=\textwidth]{fig1}
 \caption{(Shamah et. al. 2001)}
 \end{figure}
-\\
-\\
 Used ROS joystick driver to teleop and testing and blah (ref).
 
 

@@ -120,7 +120,17 @@ The main alternative to PLA plastic is ABS plastic. PLA plastic has a much lower
 The wheels were also fully 3D printed, and one large issue is that they have very little grip on smooth surfaces such as wood. A possible solution is to coat the wheels in liquid/spray-on rubber. One such product is PlastiDip https://www.plastidip.net.au/
 
 \subsection{Dynamixel Motors}
-The dynamixel motors were great - very precise movement, joint AND wheel mode, can all be easily controlled from a single raspberry pi //TODO reword
+The OARKit uses nine Dynamixel AX-12 motors. The dynamixel motors are fairly advanced compared to most motors and very good for a few reasons:
+\begin{itemize}
+  \item They are easily powered by 12V DC.
+  \item They are able to function as both highly precise joints as well as wheels in wheel mode.
+  \item They are chained together and all 9 motors are easily controlled from the Raspberry Pi
+  \item There are existing libraries to interface with the dynamixels.
+\end{itemize}
+However, they are fairly expensive and make up the bulk of the cost of the OARKit. The dynamixel AX-12A current sells at \$44.90 each. http://www.trossenrobotics.com/dynamixel-ax-12-robot-actuator.aspx
+\\
+\\
+However there do not seem to be many alternatives - the AX-12 is already outstanding for its price point.
 
 \subsection{The Brain}
 We chose to use a Raspberry Pi to act as the brain of the robot controlling the 9 dynamixels. The Pi is powerful enough for simple applications, has a fairly small physical footprint and has USB ports to connect to the USB2Dynamixel.

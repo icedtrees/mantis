@@ -112,6 +112,11 @@ The materials, components and tools required to assemble the robot include:
 \end{itemize}
 \subsection{Robot Chassis}
 Our chassis was printed with a Makerbot using PLA plastic. The printer was not particularly well calibrated and our parts were all a bit off. As a result, the assembly process was slightly more difficult but the overall result was acceptable.
+\begin{figure}[h]
+\centering
+\includegraphics[width=200pt]{report_images/plastic_imperfection.jpg}
+\caption{Very obvious imperfections, other parts are also less noticably wonky.}
+\end{figure}
 \\
 \\
 The main alternative to PLA plastic is ABS plastic. PLA plastic has a much lower melting point, which means that it may be subject to deformation if the dynamixel motors get too hot (the motors can heat up to 70 degrees celcius before shutting off). ABS plastic is stronger and generally favoured for more practical mechanical applications, but requires more complex printers with a heated bed. Both materials should be fine for use with the robot. http://www.protoparadigm.com/news-updates/the-difference-between-abs-and-pla-for-3d-printing/
@@ -120,6 +125,11 @@ The main alternative to PLA plastic is ABS plastic. PLA plastic has a much lower
 The wheels were also fully 3D printed, and one large issue is that they have very little grip on smooth surfaces such as wood. A possible solution is to coat the wheels in liquid/spray-on rubber. One such product is PlastiDip https://www.plastidip.net.au/
 
 \subsection{Dynamixel Motors}
+\begin{figure}[h]
+\centering
+\includegraphics[height=200pt]{report_images/dynamixel.jpg}
+\caption{A dynamixel AX-12+ which is newer than the AX-12 but older than the AX-12A}
+\end{figure}
 The OARKit uses nine Dynamixel AX-12 motors. The dynamixel motors are fairly advanced compared to most motors and very good for a few reasons:
 \begin{itemize}
   \item They are easily powered by 12V DC.
@@ -134,6 +144,11 @@ However there do not seem to be many alternatives - the AX-12 is already outstan
 
 \subsection{The Brain}
 We chose to use a Raspberry Pi to act as the brain of the robot controlling the 9 dynamixels. The Pi is powerful enough for simple applications, has a fairly small physical footprint and has USB ports to connect to the USB2Dynamixel.
+\begin{figure}[h]
+\centering
+\includegraphics[width=200pt]{report_images/pi.jpg}
+\caption{Raspberry Pi model B+, pictured with wifi dongle.}
+\end{figure}
 \\
 \\
 A model B or above is required because at least 2 USB ports are needed for the wifi dongle and the USB2Dynamixel.
@@ -143,21 +158,59 @@ The dynamixel motors accept 9-12V with a recommended voltage of 11.1V. http://su
 \\
 \\
 We supplied it with a 12V power source via 8 AA batteries. A better alternative would be a 11 or 12V lithium-ion rechargable battery pack - this would be lighter, last longer and cheaper in the long run.
+\begin{figure}[h]
+\centering
+\includegraphics[width=200pt]{report_images/power_sources.jpg}
+\caption{On the left, 12V power source from 8 AA batteries. On the right, a 5V rechargeable battery pack.}
+\end{figure}
+\begin{figure}[h]
+\centering
+\includegraphics[width=200pt]{report_images/wall_power.jpg}
+\caption{An optional 12V adapter that can be plugged into a wall socket for testing the mantis robot without having to go through too many batteries.}
+\end{figure}
 \\
 \\
 The Raspberry Pi requires a steady 5V power source via a mini-USB connector. We opted to use an external battery pack meant for phones as a simple, rechargable power source. A much more compact solution is probably available //TODO research
 
 \section{Assembly Process}
-The assembly process consisted of attaching the printed plastic parts to the motors via screws. The Dynamixel Robot Actuator Kit provides nine different lengths of screws, from S1 (the shortest screw) to S9 (the longest screw), as well as nuts to help stabilise the attachment. //TODO image of screws/nuts
+The assembly process consisted of attaching the printed plastic parts to the motors via screws. The Dynamixel Robot Actuator Kit provides nine different lengths of screws, from S1 (the shortest screw) to S9 (the longest screw), as well as nuts to help stabilise the attachment.
+\begin{figure}[h]
+\centering
+\includegraphics[height=200pt]{report_images/screws.jpg}
+\caption{The most common screws that were used - S3 and S4. In the lower right hand corner is an S4 with a nut attached to shorten it.}
+\end{figure}
 \\
 \\
-The assembly was made difficult and inconsistent due to the low quality of the printed plastic - the surface was not even and the dimensions were generally inaccurate. As a result, the screws used were a mix of S2, S3, and S4 screws with nuts added in where more grip was required. It is difficult to define an effective specification for screw lengths for assembly without higher quality materials. 
+The assembly was made difficult and inconsistent due to the low quality of the printed plastic - the surface was not even and the dimensions were generally inaccurate. As a result, the screws used were a mix of S2, S3, and S4 screws with nuts added in where more grip was required. It is difficult to define an effective specification for screw lengths for assembly without higher quality materials.
+\begin{figure}[h]
+\centering
+\includegraphics[width=200pt]{report_images/screw_nut.jpg}
+\caption{An example of an S4 screw used in conjuction with a nut to provide a more suitable screw length.}
+\end{figure}
 \\
 \\
-During assembly, there are certain screws that are very difficult to access. A very small phillips head screwdriver is recommended. //TODO image of difficult screw.
+During assembly, there are certain screws that are very difficult to access. A very small phillips head screwdriver is recommended.
+\begin{figure}[h]
+\centering
+\includegraphics[width=200pt]{report_images/difficult_screw.jpg}
+\caption{One of the more difficult set of screws to attach. A very short screwdriver and lots of patience is recommended.}
+\end{figure}
 \\
 \\
-There is a certain order of operations to follow: the cables which connect the dynamixels together must be plugged in before attaching the dynamixels to the chassis in many cases - it becomes very difficult after all the pieces are secured. This means that the order of the dynamixels must be determined ahead of time. Note that the actual ordering does not matter, as long as all the motors are connected on one network. //TODO labeled image of our ordering
+There is a certain order of operations to follow: the cables which connect the dynamixels together must be plugged in before attaching the dynamixels to the chassis in many cases - it becomes very difficult after all the pieces are secured. This means that the order of the dynamixels must be determined ahead of time. Note that the actual ordering does not matter, as long as all the motors are connected on one network.
+\begin{figure}[h]
+\centering
+\includegraphics[width=200pt]{report_images/top_down.jpg}
+\caption{The assembled mantis robot, with each dynamixel motor labeled in the order in which they were chained together. The USB2Dynamixel attaches to the motor labeled 1.}
+\end{figure}
+\\
+\\
+In order to power the dynamixel motors while using the USB2Dynamixel, the 12V power source must be spliced with the cable coming out of the data pin from the USB2Dynamixel in order to provide power and data.
+\begin{figure}[h]
+\centering
+\includegraphics[width=200pt]{report_images/splice.jpg}
+\caption{The three wires from left to right (as plugged into the USB2Dynamixel) carry data, 12V and ground respectively. Pictured is a sample spliced cable which connects the 12V power source and USB2Dynamixel to the dynamixel motors.}
+\end{figure}
 
 
 \section{Networking and Interface}

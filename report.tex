@@ -398,7 +398,7 @@ While significant progress has been made, there is still plenty of additional wo
 OARKit also contains an optional movable arm which holds a camera or sensor. Additional software could be written to move the arm appropriately and process the camera or sensor data. Perhaps a more powerful onboard controller would work better here to be able to do some of the image processing locally.
 \\
 \\
-Currently the parts do not fit very well inside the main body of the robot chassis. The USB2Dynamixel, while convenient, is very bulky and is the main culprit of this problem. It can be removed if the Pi interfaces with the dynamixel motors directly via serial pins. //TODO cite people talking about how need additional gate/circuit.
+Currently the parts do not fit very well inside the main body of the robot chassis. The USB2Dynamixel, while convenient, is very bulky and is the main culprit of this problem, since it contains USB converters for multiple outputs, such as RS232 and RS485. It can be removed if the Pi interfaces with the dynamixel motors directly via a more compact TTL converter. We could theoretically attach such a system directly to the Pi's USB pins. Something like the USB2AX would solve this problem very efficiently (see Xevelabs, 2014).
 
 
 \section{References}
@@ -427,6 +427,8 @@ Shamah, B.,  Wagner, M. D., Moorehead S., Teza, J., Wettergreen, D., \& Whittake
 \\
 Sheh, R. (2014). \textit{Open Academic Robot Kit: The Six-Wheeled Wonder - a 6 Wheel Drive robot platform using Dynamixel AX-12A servos}. Available at: http://www.thingiverse.com/thing:327689 (accessed 04/11/2014).\\
 \\
-TrossenRobotics. (2014). \textit{Dynamixel AX-12A Robot Actuator}. Available at http://www.trossenrobotics.com/dynamixel-ax-12-robot-actuator.aspx. (accessed 12/11/14).
+TrossenRobotics. (2014). \textit{Dynamixel AX-12A Robot Actuator}. Available at http://www.trossenrobotics.com/dynamixel-ax-12-robot-actuator.aspx. (accessed 12/11/14).\\
+\\
+Xevelabs. (2014). \textit{Product: USB2AX}. Available at http://xevelabs.com/doku.php?id=product:usb2ax:usb2ax. (accessed 13/11/14)\\
 
 \end{document}

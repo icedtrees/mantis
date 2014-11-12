@@ -40,7 +40,7 @@ Current rescue robots are incredibly expensive and not suitable for student use.
 Disaster, such as the Great Hanshi-Awaji earthquake on the 17th of January 1995, or the advent of the Sept 11 attacks on the World Trade Centre necessarily impel research into better search and rescue strategies, and search and rescue robots (Kobe University Library, 1999; Davids, 2002). Rescue robots had been proved in the site of such catastrophe, and large amounts of funding have been invested. Nevertheless cost is still a significant consideration, with specialised robots running upwards of \$60,000 and as high as \$300,000 (Bigge, 2011). Certainly not all rescue robots are so expensive, but price is still rather inhibitory to hobbyists and students, who have much to add to the rescue robotic endeavour. On the other hand robotics kits geared towards student use are limited in function, difficult to customise, and have poor compatibility with parts from other companies or outside sources (Open Academic Robotic Kit, 2014).
 \\
 \\
-With this in mind, cost effective models with a high degree of flexibility were looked into. Sheh has developed a 3D printed open source design for a teleoperated search and rescue robot as part of the Open Academic Robotic Kit (OARKit) (Sheh, R. 2014). The complete kit is expected to cost around \$500, which is well within the budget of schools and universities, however it has no source code as yet. The aim of the project then, is to develop a basic library that can be used in conjunction with OARKit, in order to facilitate use as a teaching aid.
+With this in mind, cost effective models with a high degree of flexibility were looked into. Sheh has developed a 3D printed open source design for a teleoperated search and rescue robot as part of the Open Academic Robotic Kit (OARKit) (Sheh, R. 2014). Sheh's robot is currently unnamed, and is referred to in this report as Mantis, as it bears remarkable likeness to a preying mantis. A complete Mantis is expected to cost around \$500, which is well within the budget of schools and universities, however it has no source code as yet. The aim of the project then, is to develop a basic library that can be used in conjunction with Mantis and OARKit, in order to facilitate use as a teaching aid.
 
 \section{Literature Review}
 
@@ -111,47 +111,47 @@ The materials, components and tools required to assemble the robot include:
   \item \textit{Optional: soldering kit and heatshrink to properly splice a cable}
 \end{itemize}
 \subsection{Robot Chassis}
-Our chassis was printed with a Makerbot using PLA plastic. The printer was not particularly well calibrated and our parts were all a bit off. As a result, the assembly process was slightly more difficult but the overall result was acceptable.
+The Mantis chassis was printed with a Makerbot using PLA plastic. The printer was not particularly well calibrated and so the parts were all slightly too large. As a result, the assembly process was difficult but the overall result was acceptable.
 \\
 \\
-The main alternative to PLA plastic is ABS plastic. PLA plastic has a much lower melting point, which means that it may be subject to deformation if the dynamixel motors get too hot (the motors can heat up to 70 degrees celcius before shutting off). ABS plastic is stronger and generally favoured for more practical mechanical applications, but requires more complex printers with a heated bed. Both materials should be fine for use with the robot. http://www.protoparadigm.com/news-updates/the-difference-between-abs-and-pla-for-3d-printing/
+The main alternative to PLA plastic is ABS plastic. PLA plastic has a much lower melting point, which means that it may be subject to deformation if the dynamixel motors get too hot (the motors can heat up to 70 degrees celcius before shutting off). ABS plastic is stronger and generally favoured for more practical mechanical applications, but requires more complex printers with a heated bed. Both materials should be fine for use with Mantis (Chilson, 2013).
 \\
 \\
-The wheels were also fully 3D printed, and one large issue is that they have very little grip on smooth surfaces such as wood. A possible solution is to coat the wheels in liquid/spray-on rubber. One such product is PlastiDip https://www.plastidip.net.au/
+The wheels were also fully 3D printed, and one large issue is that they have very little grip on smooth surfaces such as wood. A possible solution is to coat the wheels in liquid/spray-on rubber. One such product is PlastiDip (PlastiDip, 2013).
 
 \subsection{Dynamixel Motors}
-The OARKit uses nine Dynamixel AX-12 motors. The dynamixel motors are fairly advanced compared to most motors and very good for a few reasons:
+Mantis uses nine Dynamixel AX-12 motors. The dynamixel motors are fairly advanced compared to most motors and very good for a few reasons:
 \begin{itemize}
   \item They are easily powered by 12V DC.
   \item They are able to function as both highly precise joints as well as wheels in wheel mode.
   \item They are chained together and all 9 motors are easily controlled from the Raspberry Pi
   \item There are existing libraries to interface with the dynamixels.
 \end{itemize}
-However, they are fairly expensive and make up the bulk of the cost of the OARKit. The dynamixel AX-12A current sells at \$44.90 each. http://www.trossenrobotics.com/dynamixel-ax-12-robot-actuator.aspx
+However, they are fairly expensive and make up the bulk of the cost of the OARKit. The dynamixel AX-12A currently sell for \$44.90 each (TrossenRobotics, 2014).
 \\
 \\
 However there do not seem to be many alternatives - the AX-12 is already outstanding for its price point.
 
 \subsection{The Brain}
-We chose to use a Raspberry Pi to act as the brain of the robot controlling the 9 dynamixels. The Pi is powerful enough for simple applications, has a fairly small physical footprint and has USB ports to connect to the USB2Dynamixel.
+A Raspberry Pi was used to control the 9 Dynamixel motors, as it is powerful enough for simple applications, has a fairly small physical footprint and has USB ports to connect to the USB2Dynamixel.
 \\
 \\
 A model B or above is required because at least 2 USB ports are needed for the wifi dongle and the USB2Dynamixel.
 
 \subsection{Power Sources}
-The dynamixel motors accept 9-12V with a recommended voltage of 11.1V. http://support.robotis.com/en/product/dynamixel/ax\_series/dxl\_ax\_actuator.htm
+The dynamixel motors accept 9-12V with a recommended voltage of 11.1V (Robotis, 2010).
 \\
 \\
-We supplied it with a 12V power source via 8 AA batteries. A better alternative would be a 11 or 12V lithium-ion rechargable battery pack - this would be lighter, last longer and cheaper in the long run.
+The motors were supplied with a 12V power source via 8 AA batteries. A better alternative would be a 11 or 12V lithium-ion rechargable battery pack - this would be lighter, last longer and cheaper in the long run.
 \\
 \\
-The Raspberry Pi requires a steady 5V power source via a mini-USB connector. We opted to use an external battery pack meant for phones as a simple, rechargable power source. A much more compact solution is probably available //TODO research
+The Raspberry Pi requires a steady 5V power source via a mini-USB connector. An external battery pack for phones was used as a simple, rechargable power source, however ideally a more compact power source would be used, as the Mantis have very little onboard space. //TODO research
 
 \section{Assembly Process}
 The assembly process consisted of attaching the printed plastic parts to the motors via screws. The Dynamixel Robot Actuator Kit provides nine different lengths of screws, from S1 (the shortest screw) to S9 (the longest screw), as well as nuts to help stabilise the attachment. //TODO image of screws/nuts
 \\
 \\
-The assembly was made difficult and inconsistent due to the low quality of the printed plastic - the surface was not even and the dimensions were generally inaccurate. As a result, the screws used were a mix of S2, S3, and S4 screws with nuts added in where more grip was required. It is difficult to define an effective specification for screw lengths for assembly without higher quality materials. 
+The assembly was made difficult and inconsistent due to the low quality of the printed plastic - the surface was uneven and as the printer was not calibrated well the pieces were of an irregular size. As a result, the screws used were a mix of S2, S3, and S4 screws with nuts added in where more grip was required. It is difficult to define an effective specification for screw lengths for assembly without higher quality materials. 
 \\
 \\
 During assembly, there are certain screws that are very difficult to access. A very small phillips head screwdriver is recommended. //TODO image of difficult screw.
@@ -164,7 +164,7 @@ There is a certain order of operations to follow: the cables which connect the d
 It is crucial for the robot to be able to communicate over the network in some form, so that it can operate without being tethered to cables. The onboard Raspberry Pi and dynamixel motors are equipped with portable power sources, and a wifi dongle allows the Pi to communicate over a network over wifi.
 
 \subsection{A Sample Interface}
-We designed a sample interface to use the high level API functions provided by our pyOARKit library. Contained in interface.py, it can be run from the terminal and accepts input from the keyboard.
+A sample interface has been designed to use the high level API functions provided by our pyOARKit library. Contained in interface.py, it can be run from the terminal and accepts input from the keyboard.
 \\
 \\
 The interface is very simple and involves text-based commands of the form <command><value> where <command> is a single letter and <value> is typically an integer or a float.
@@ -182,7 +182,7 @@ L<angle> & Float from -1 to 1 & Lift to the given normalised angle at an arbitra
 \end{tabular}
 
 \subsection{ROS Integration}
-We wanted integration with ROS in order to leverage the existing ecosystem of software and tools. Initially, the intention was to install ROS on the onboard Raspberry Pi but this proved to be complicated since ROS only officially targets Ubuntu. Running ROS as well as controlling the nine dynamixel motors on the Pi might also be difficult since the Pi (Model B+) only boasts 512mb of RAM and a 700MHz CPU.
+It was decided that the Mantis should be integrated with ROS in order to leverage the existing ecosystem of software and tools. Initially, the intention was to install ROS on the onboard Raspberry Pi but this proved to be complicated since ROS only officially compliant with Ubuntu. Furthermore, running ROS as well as controlling the nine dynamixel motors on the Pi would be difficult. The Pi (Model B+) only boasts 512mb of RAM and a 700MHz CPU, and it is unnecessary to increase cost by .
 \\
 \\
 Instead, we decided to run a small UDP server on the Pi and run the ROS node on a desktop/laptop.
@@ -192,13 +192,11 @@ This is a small UDP server run on the Raspberry Pi and uses the sample interface
 \begin{lstlisting}[language=bash]
   $ python server.py 9999 # Run the server on port 9999
 \end{lstlisting}
-
 \subsubsection{ROS Node}
 Our sample ROS node runs on a desktop or laptop and sends UDP messages to the server on the Pi based on input from a joystick. We used a logitech controller in our demo, but the code should be able to be easily adapted for other joysticks or similar teleop nodes. Ensure that the joystick is plugged in, and then:
 \begin{lstlisting}[language=bash]
   $ sudo apt-get install ros-indigo-joystick-drivers # Make sure you have the joystick drivers
   $ roslaunch logitech.launch
-
   $ cd workspace
   $ catkin_make
   $ rosrun mantis move.py <ip_of_raspberry_pi> 9999 # Connect to the Pi on port 9999
@@ -206,7 +204,7 @@ Our sample ROS node runs on a desktop or laptop and sends UDP messages to the se
 
 \subsubsection{Logitech Joystick}
 You should now be able to control the robot via the Logitech joystick. The control scheme is as follows:
-\\ 
+\\
 \\
 \begin{tabular}{ | l | p{7cm} | }
 \hline
@@ -236,25 +234,20 @@ During the demonstration we experienced very heavy delays and commands on the jo
 \section{Locomotion}
 The OARKit robot has a fairly rare design in which six wheels can turn relative to each other via two rotating joints, each with a range of about $\pm20$ degrees.
 \\
-\begin{figure}[ht]
-    \includegraphics[height = 200pt]{report_images/diagram1.png}
-    \caption{(A diagram of the articulated steering system of the OARKit robot.)}
-    \label{fig:diagram1}
-\end{figure}
+\\
+figure goes here
+\\
 \\
 There have been similar studies into wheel velocities for similar vehicles, such as Shamah et al. (2001)'s calculations diagrammed above, but the OARKit robot is unique in that it has mobile joints rather than rotating axles, and it also has six wheels for better locomotion.
 \\
 \\
-Similar calculations to Shamah et al. were used. By definining a common intersection point for lines passing through all the axles, and using the distance between the wheel and the common intersection point to scale the relative velocity of the wheel, it is possible to define a smooth, efficient movement model for the robot.
-\\
-\begin{figure}[ht]
-    \includegraphics[height = 200pt]{report_images/diagram2.png}
-    \caption{(The measurements we used in our calculations of wheel velocities)}
-    \label{fig:diagram2}
-\end{figure}
+We use similar calculations to Shamah et al., by definining a common intersection point for lines passing through all the axles, and using the distance between the wheel and the common intersection point to scale the relative velocity of the wheel.
 \\
 \\
-Since there are six wheels and not four, three different axles are used to steer the robot. Thus it is essential to make sure that the back axle is angled such that the line extended inwards would intersect with the intersection of the front two axle lines.
+diagram goes here
+\\
+\\
+Since we have six wheels and not four, there are six different axles. Thus we must make sure that the back axle is angled such that the line extended inwards would intersect with the intersection of the front two axle lines.
 \\
 \\
 For $\theta_{front} > \frac{\pi}{2}$:
@@ -265,7 +258,7 @@ For $\theta_{front} > \frac{\pi}{2}$:
 \[ \theta_{back} = \pi - tan^{-1}(tan(\pi - \theta_{front}) \times \frac{spine_{top}}{spine_{bottom}}) \]
 \\
 \\
-Using the angle values of the top and bottom, a definition of the relative velocities of all the wheels as the distances from the center point:
+With the angle values of the top and bottom, we can thus define the relative velocities of all the wheels as the distances from the center point:
 \\
 \[ \omega_{topleft} \propto \frac{1}{sin(a)} + \frac{arm_{topleft}}{spine_{top} * tan(\theta_{top})} \]
 \[ \omega_{topright} \propto \frac{1}{sin(1)} - \frac{arm_{topright}}{spine_{top} * tan(\theta_{top})} \]
@@ -275,7 +268,7 @@ Using the angle values of the top and bottom, a definition of the relative veloc
 \[ \omega_{bottomleft} \propto \frac{spine_{bottom}}{spine_{top} * tan(\theta_{top}) * cos(\theta{bottom})} - \frac{arm_{bottomright}}{spine_{top} * tan(\theta_{top})} \]
 \\
 \\
-This kind of articulated steering is used as the baseline velocity for all the wheels when the robot is at a certain inclination. Ideally this would cause all wheels to travel exactly at the most efficient tangential velocity for the given inclination.
+We use this kind of articulated steering as the baseline velocity for all the wheels when the robot is at a certain inclination. Ideally this would cause all wheels to travel exactly at the correct tangential velocity.
 \\
 In our mantis library, we define the velocity of the vehicle $v$ as the tangential velocity of the center point of the middle axle (which is $spine_{top} * tan(\theta_{top})$ distance from the central intersection). We can multiply any of the above formulae by $v$ to obtain a velocity relative to the velocity of the center of the vehicle:
 \\
@@ -354,7 +347,7 @@ CENTER_LIFT_VALUE = 512
 The aim of the project was to write a suite of software for the Open Academic Robot Kit which would provide locomotion, networking and compatibility with ROS. We created a library exposing a high level API for locomotion, and a networking model that was able to integrate with ROS and facilitate control of the robot with a Logitech controller.
 \\
 \\
-The final result is a cheap, accessible 3D-printed robot able to be controlled wirelessly and therefore we have achieved our goal. //TODO reword
+The final result is a cheap, accessible 3D-printed robot able to be controlled wirelessly.
 
 \subsection{Future Work}
 While significant progress has been made, there is still plenty of additional work that could be done.
@@ -371,6 +364,7 @@ Bigge, R. (2011). \textit{Robots to the rescue}. Available at\\
 https://secure.globeadvisor.com/servlet/ArticleNews/story/gam/20110527\\
 /ROBMAG\_JUNE2011\_P12\_14\_ (accessed 04/11/2014).\\
 \\
+Chilson, L. (2013). \textit{The difference between ABS and PLA for 3D printing}. Available at http://www.protoparadigm.com/news-updates/the-difference-between-abs-and-pla-for-3d-printing/. (accessed 12/11/2014).
 Davids, A. (2002). Urban search and rescue robots: from tragedy to technology. \textit{Intelligent Systems, IEEE 17}(2). 81 - 83.\\
 \\
 Gindel, P. (2010). \textit{Arduino library for AX-12}. \\Available at http://www.pablogindel.com/2010/01/biblioteca-de-arduino-para-ax-12/. (accessed 09/11/14).\\
@@ -381,8 +375,14 @@ Kobe University Library. (1999) \textit{Great Hanshin-Awaji Earthquake Disaster 
 \\
 The Open Academic Robotic Kit. Available at www.oarkit.org (accessed 09/11/2014).\\
 \\
+PlastiDip. (2013). \textit{Plastic Dips and Coatings}. Available at https://www.plastidip.net.au/. (accessed 12/11/2014).\\
+\\
+Robotis. (2010). \textit{ROBOTIS e-Manual AX-12/ AX-12+/ AX-12A}. Available at http://support.robotis.com/en/product/dynamixel/ax\_series/dxl\_ax\_actuator.htm. (accessed 12/11/2014).\\
+\\
 Shamah, B.,  Wagner, M. D., Moorehead S., Teza, J., Wettergreen, D., \& Whittaker, W. (2001). \textit{Steering and Control of a Passively Articulated Robot}. The Field Robotics Center, Carnegie Mellon University.\\
 \\
-Sheh, R. (2014). \textit{Open Academic Robot Kit: The Six-Wheeled Wonder - a 6 Wheel Drive robot platform using Dynamixel AX-12A servos}. Available at: http://www.thingiverse.com/thing:327689 (accessed 04/11/2014).
+Sheh, R. (2014). \textit{Open Academic Robot Kit: The Six-Wheeled Wonder - a 6 Wheel Drive robot platform using Dynamixel AX-12A servos}. Available at: http://www.thingiverse.com/thing:327689 (accessed 04/11/2014).\\
+\\
+TrossenRobotics. (2014). \textit{Dynamixel AX-12A Robot Actuator}. Available at http://www.trossenrobotics.com/dynamixel-ax-12-robot-actuator.aspx. (accessed 12/11/14).
 
 \end{document}

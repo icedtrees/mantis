@@ -54,8 +54,7 @@ Similarly the Savage Electronics library was written in C++. It also is designed
 \\
 \\
 ForestMoon Dynamixel library by Scott Ferguson was originally written in C\#, which posed a problem as ROS is currently only implemented in C++, python and Java (Ferguson). Fortunately Patrick Goebel wrote a python version (Goebel, 2014). Ferguson's library is able to be used on a Raspberry Pi, and documentation is English, so it was chosen over the other options.
-\\
-TODO: discuss bug fixes done?
+
 \\
 \\
 Knowing that an Arduino is unnecessary, the next choice is the microcomputer used. The obvious choice would be the Raspberry Pi. It is ubiquitous, and many educational institutions already own several. However there are several more powerful alternatives, each with their own strengths. (See Table 1.)
@@ -96,7 +95,7 @@ As a library was being made for use with the OARKit, both skid steering and arti
 \includegraphics[width=\textwidth]{fig1}
 \caption{(Shamah et. al. 2001)}
 \end{figure}
-Used ROS joystick driver to teleop and testing and blah (ref).
+Morgan Quigley, Brian Gerkey, Kevin Watts, Blaise Gassend authored a generic ROS joystick driver, which interfaces a joystick to ROS. This node is used for testing, and for teleoperation (Bohren, 2013).
 
 \section{Materials and Components}
 The materials, components and tools required to assemble the robot include:
@@ -416,6 +415,8 @@ Currently the parts do not fit very well inside the main body of the robot chass
 Bigge, R. (2011). \textit{Robots to the rescue}. Available at\\
 https://secure.globeadvisor.com/servlet/ArticleNews/story/gam/20110527\\
 /ROBMAG\_JUNE2011\_P12\_14\_ (accessed 04/11/2014).\\
+\\
+Bohren, J. (2013). \textit{joy}. Available at http://wiki.ros.org/joy. (accessed 12/11/2014).\\
 \\
 Chilson, L. (2013). \textit{The difference between ABS and PLA for 3D printing}. Available at http://www.protoparadigm.com/news-updates/the-difference-between-abs-and-pla-for-3d-printing/. (accessed 12/11/2014).
 Davids, A. (2002). Urban search and rescue robots: from tragedy to technology. \textit{Intelligent Systems, IEEE 17}(2). 81 - 83.\\

@@ -235,10 +235,10 @@ L<angle> & Float from -1 to 1 & Lift to the given normalised angle at an arbitra
 \end{tabular}
 
 \subsection{ROS Integration}
-It was decided that the Mantis should be integrated with ROS in order to leverage the existing ecosystem of software and tools. Initially, the intention was to install ROS on the onboard Raspberry Pi but this proved to be complicated since ROS only officially compliant with Ubuntu. Furthermore, running ROS as well as controlling the nine dynamixel motors on the Pi would be difficult. The Pi (Model B+) only boasts 512mb of RAM and a 700MHz CPU, and it is unnecessary to increase cost by .
+It was decided that the Mantis should be integrated with ROS in order to leverage the existing ecosystem of software and tools. Initially, the intention was to install ROS on the onboard Raspberry Pi but this proved to be complicated since ROS only officially compliant with Ubuntu. Furthermore, running ROS as well as controlling the nine dynamixel motors on the Pi would be difficult. The Pi (Model B+) only boasts 512mb of RAM and a 700MHz CPU, and it is unnecessary to increase cost with a more powerful microcomputer, when the processing could be delegated.
 \\
 \\
-Instead, we decided to run a small UDP server on the Pi and run the ROS node on a desktop/laptop.
+Instead, a small UDP server was run on the Pi and the ROS node was run on a desktop/laptop.
 
 \subsubsection{server.py}
 This is a small UDP server run on the Raspberry Pi and uses the sample interface.py. It accepts UDP messages which contain commands in the same format as the sample interface. From the Pi:
@@ -246,7 +246,7 @@ This is a small UDP server run on the Raspberry Pi and uses the sample interface
   $ python server.py 9999 # Run the server on port 9999
 \end{lstlisting}
 \subsubsection{ROS Node}
-Our sample ROS node runs on a desktop or laptop and sends UDP messages to the server on the Pi based on input from a joystick. We used a logitech controller in our demo, but the code should be able to be easily adapted for other joysticks or similar teleop nodes. Ensure that the joystick is plugged in, and then:
+This sample ROS node runs on a desktop or laptop and sends UDP messages to the server on the Pi based on input from a joystick. A logitech controller was used when demonstrating, but the code should be able to be easily adapted for other joysticks or similar teleop nodes. Ensure that the joystick is plugged in, and then:
 \begin{lstlisting}[language=bash]
   $ sudo apt-get install ros-indigo-joystick-drivers # Make sure you have the joystick drivers
   $ roslaunch logitech.launch
@@ -256,7 +256,7 @@ Our sample ROS node runs on a desktop or laptop and sends UDP messages to the se
 \end{lstlisting}
 
 \subsubsection{Logitech Joystick}
-You should now be able to control the robot via the Logitech joystick. The control scheme is as follows:
+The Logitech joystick should now be able to control the Mantis. The control scheme is as follows:
 \\
 \\
 \begin{tabular}{ | l | p{7cm} | }
@@ -270,19 +270,19 @@ Hold Start button & Return the robot to the neutral position - turn to face forw
 \end{tabular}
 
 \subsection{Design Decisions and Potential Issues}
-The main decision to make was to decide on the protocol used to send messages from the ROS node to the server on the Pi. We chose to use UDP over TCP or any other protocols because being able to control the robot in real time was a priority. There were potentially a lot of messages being sent very quickly when moving the joystick and using TCP could have caused some unwanted delay.
+The main decision to make was to decide on the protocol used to send messages from the ROS node to the server on the Pi. UDP was chosen over TCP or any other protocols because being able to control the robot in real time was a priority. There were potentially a lot of messages being sent very quickly when moving the joystick and using TCP could have caused some unwanted delay.
 \\
 \\
-We weren't too worried about dropped packets (UDP does not guarantee delivery) because our interface and library are mostly stateless. That is, subsequent commands are mutually exclusive and do not affect one another. At worst, it would just require inputting a particular command again. However, we did run into an issue where it was repeatedly observed that actions on the joystick sometimes would not register. We pinpointed the issue to a few potential sources:
+Dropped packets are not a large issue (UDP does not guarantee delivery) because the interface and library are mostly stateless. That is, subsequent commands are mutually exclusive and do not affect one another. At worst, it would just require inputting a particular command again. However, an issue was observed, where actions on the joystick sometimes would not register. The issue was pinpointed to a few potential sources:
 \begin{enumerate}
   \item Dropping packets over the network
   \item Congestion in the dynamixel network causing commands sent to the dynamixels to not take effect
   \item Incorrect report from the joystick itself
 \end{enumerate}
-We tried changing our server and client to use TCP instead of UDP but the issue persisted. It also seems unlikely that there would be a hardware issue with the joystick or the joystick drivers but we were unable to verify this. A possible solution could be to try lowering the rate at which commands are sent to the dynamixels (currently every 0.2 seconds). However, this would likely introduce noticeable input delay.
+The server and client was changed to use TCP instead of UDP, but the issue persisted. It also seems unlikely that there would be a hardware issue with the joystick or the joystick drivers but we were unable to verify this. A possible solution could be to try lowering the rate at which commands are sent to the dynamixels (currently every 0.2 seconds). However, this would likely introduce noticeable input delay.
 \\
 \\
-During the demonstration we experienced very heavy delays and commands on the joystick would frequently fail to register, especially lifting the front segment. However, after cleaning up and restructuring the code, subsequent testing found the system to be very responsive and unregistered commands were fairly rare. At this point it is unclear whether it was an issue with the code or a more congested wifi network.
+During the demonstration very heavy delays were experienced, and commands on the joystick would frequently fail to register, especially lifting the front segment. However, after cleaning up and restructuring the code, subsequent testing found the system to be very responsive and unregistered commands were fairly rare. At this point it is unclear whether it was an issue with the code or a more congested wifi network at the time of demonstration.
 
 \section{Locomotion}
 The OARKit robot has a fairly rare design in which six wheels can turn relative to each other via two rotating joints, each with a range of about $\pm20$ degrees.
@@ -338,7 +338,7 @@ This method of locomotion is quite efficient - the wheels are all synchronised f
 We implement this additively - there is a skid steering command available that will add a certain velocity to the wheels on each side of the robot, aiding turns greatly. For example, if a velocity of $2pi$ $m/s$ was added to one side, and a velocity of $-2pi$ $m/s$ was added to the other side, the vehicle would theoretically rotate at approximately $1 / radius$ revolutions per second along its current course, something not achievable with articulated steering. However, as mentioned before, since this is being performed on six wheels, there is a fair amount of drag between the wheels and the ground. This can be reduced by lifting up the front portion of the robot, so only four wheels are in contact with the ground.
 
 \subsection{Results}
-During our tests of the robot, we found that both methods of steering were effective on wood and carpet surfaces. The six-wheeled skid steering had some issues on the carpet because the wheels gripped the surface too hard, but if the front portion of the robot was lifted up, there were no resulting problems. Additionally, the skid steering was unreliable and caused the robot to rotate differing angular distances on different surfaces.
+During testing, it was found that both methods of steering the Mantis were effective on wood and carpet surfaces. The six-wheeled skid steering had some issues on the carpet because the wheels gripped the surface too hard, but if the front portion of the robot was lifted up, there were no resulting problems. Additionally, the skid steering was unreliable and caused the robot to rotate differing angular distances on different surfaces.
 \\
 \\
 However, the robot did also have the problem of not having enough grip. The wheels were constructed from PLA filament and had no coating, which means they had very little friction with the wooden surface and had some trouble performing maneuvers on sloped wooden surfaces, as it would slip down.
@@ -347,7 +347,7 @@ However, the robot did also have the problem of not having enough grip. The whee
 It was also noted that it was quite possible to reliably execute tight turns on multiple surfaces by using common vehicle maneuvers, such as three-point turns, in conjunction with articulated steering.
 
 \subsection{Interface}
-We provide several interface functions in mantis.py that allow control of the robot with the designated steering system:
+Several interface functions are provided in mantis.py that allow control of the robot with the designated steering system:
 \begin{itemize}
     \item move(int -1023 to 1023): Move the robot at a given velocity (positive or negative). Path and direction is determined by current articulation.
     \item skid(int -1023 to 1023): Add a skid steering velocity to the current movement.
@@ -357,7 +357,7 @@ We provide several interface functions in mantis.py that allow control of the ro
     \item lift(int -1023 to 1023): Same as above, except with the lifting joint.
 \end{itemize}
 
-We define multiple constants which refer to all the dimensions and maximum and minimum turning points for the servomotors. These can be found in pyoarkit/config.py. The default measurements we use are as follows:
+Multiple constants are defined which refer to all the dimensions and maximum and minimum turning points for the servomotors. These can be found in pyoarkit/config.py, and calibrated for individual robots. The default measurements are as follows:
 \lstset{language=Python}
 \begin{lstlisting}
 # angles for top axle
@@ -406,10 +406,10 @@ The final result is a cheap, accessible 3D-printed robot able to be controlled w
 While significant progress has been made, there is still plenty of additional work that could be done.
 \\
 \\
-The OARKit is extensible with an option movable arm which holds a camera or sensor. Additional software could be written to move the arm appropriately and process the camera or sensor data. Perhaps a more powerful onboard controller would work better here to be able to do some of the image processing locally.
+OARKit also contains an optional movable arm which holds a camera or sensor. Additional software could be written to move the arm appropriately and process the camera or sensor data. Perhaps a more powerful onboard controller would work better here to be able to do some of the image processing locally.
 \\
 \\
-Currently the parts do not fit very well inside the main body of the robot chassis. The USB2Dynamixel, while convenient, is very bulky and is the main culprit of this problem. Perhaps it could be skipped entirely and the Pi could interface with the dynamixel motors directly via serial pins. //TODO cite people talking about how need additional gate/circuit.
+Currently the parts do not fit very well inside the main body of the robot chassis. The USB2Dynamixel, while convenient, is very bulky and is the main culprit of this problem. It can be removed if the Pi interfaces with the dynamixel motors directly via serial pins. //TODO cite people talking about how need additional gate/circuit.
 
 
 \section{References}

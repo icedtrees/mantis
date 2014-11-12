@@ -138,6 +138,17 @@ We supplied it with a 12V power source via 8 AA batteries. A better alternative 
 The Raspberry Pi requires a steady 5V power source via a mini-USB connector. We opted to use an external battery pack meant for phones as a simple, rechargable power source. A much more compact solution is probably available //TODO research
 
 \section{Assembly Process}
+The assembly process consisted of attaching the printed plastic parts to the motors via screws. The Dynamixel Robot Actuator Kit provides nine different lengths of screws, from S1 (the shortest screw) to S9 (the longest screw), as well as nuts to help stabilise the attachment. //TODO image of screws/nuts
+\\
+\\
+The assembly was made difficult and inconsistent due to the low quality of the printed plastic - the surface was not even and the dimensions were generally inaccurate. As a result, the screws used were a mix of S2, S3, and S4 screws with nuts added in where more grip was required. It is difficult to define an effective specification for screw lengths for assembly without higher quality materials. 
+\\
+\\
+During assembly, there are certain screws that are very difficult to access. A very small phillips head screwdriver is recommended. //TODO image of difficult screw.
+\\
+\\
+There is a certain order of operations to follow: the cables which connect the dynamixels together must be plugged in before attaching the dynamixels to the chassis in many cases - it becomes very difficult after all the pieces are secured. This means that the order of the dynamixels must be determined ahead of time. Note that the actual ordering does not matter, as long as all the motors are connected on one network. //TODO labeled image of our ordering
+
 
 \section{Networking and Interface}
 It is crucial for the robot to be able to communicate over the network in some form, so that it can operate without being tethered to cables. The onboard Raspberry Pi and dynamixel motors are equipped with portable power sources, and a wifi dongle allows the Pi to communicate over a network over wifi.

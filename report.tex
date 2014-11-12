@@ -24,6 +24,8 @@
 %opening
 \title{A Teleoperated Command Library for a \\ Six Wheeled Rescue Robot \\ COMP3431}
 \author{Chan G., Huang L., Mao D.}
+\small School of Computer Science and Engineering\\[-0.8ex]
+\small University of New South Wales Sydney NSW 2052}
 \date{\today}
 
 \begin{document}
@@ -53,6 +55,28 @@ Similarly the Savage Electronics library was written in C++. It also is designed
 ForestMoon Dynamixel library by Scott Ferguson was originally written in C\#, which posed a problem as ROS is currently only implemented in C++, python and Java (Ferguson). Fortunately Patrick Goebel wrote a python version (Goebel, 2014). Ferguson's library is able to be used on a Raspberry Pi, and documentation is English, so it was chosen over the other options.
 \\
 TODO: discuss bug fixes done?
+\\
+\\
+Knowing that an Arduino is unnecessary, the next choice is the microcomputer used. The obvious choice would be the Raspberry Pi. It is ubiquitous, and many educational institutions already own several. However there are several more powerful alternatives, each with their own strengths. (See Table 1.)
+\\
+
+
+\begin{table}[h]
+\centering
+%\scalebox{0.7}{
+\begin{tabular}[c]{l l p{2.5cm} l p{1.7cm}}
+Microprocessor   & Cost* & Processor                             & RAM             & Storage                    \\
+\hline
+Raspberry Pi     & \$35      & 700MHz Single-Core ARM v6             & 512 MB      & SD                         \\
+HummingBoard-i1  & \$45      & 1.0GHz Single-Core ARM v7             & 512 MB      &             microSD               \\
+BeagleBone Black & \$45      & AM335X 1GHz ARM A8             & 512 MB DDR3 & 2GB, microSD \\
+Radxa Rock Lite  & \$59      & 1.6GHz  ARM A9 quad core & 1GB DDR3           & microSD                   
+\end{tabular}
+%}
+\caption{A comparison of several key features. *base cost in USD}
+\end{table}
+
+In the end, it doesn't greatly matter what microcomputer is used, so long as it is sufficiently powerful. There is no reason that anyone else cannot use a different microcomputer either, except that it is perhaps easier to replicate with a similar setup. That said, a Raspberry Pi Model B was used, as we were only dealing with locomotion and networking. Both of these are relatively low intensity tasks, but if a camera module or something similar were added a more powerful microprocessor might be needed.
 \\
 \\
 There are several main methods of steering, each with their own advantages and disadvantages (Shamah et. al., 2001). By virtue of chassis design a range of steering options were unable to be implemented. These included ackerman, independent, synchronous or omnidirectional steering. The remaining options were skid steering and articulated drive.

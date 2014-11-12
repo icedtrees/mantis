@@ -374,7 +374,13 @@ Dropped packets are not a large issue (UDP does not guarantee delivery) because 
   \item Congestion in the dynamixel network causing commands sent to the dynamixels to not take effect
   \item Incorrect report from the joystick itself
 \end{enumerate}
-The server and client was changed to use TCP instead of UDP, but the issue persisted. It also seems unlikely that there would be a hardware issue with the joystick or the joystick drivers but we were unable to verify this. A possible solution could be to try lowering the rate at which commands are sent to the dynamixels (currently every 0.2 seconds). However, this would likely introduce noticeable input delay.
+The server and client was changed to use TCP instead of UDP, but the issue persisted. It also seems unlikely that there would be a hardware issue with the joystick or the joystick drivers but we were unable to verify this.
+\\
+\\
+A possible solution could be to try lowering the rate at which commands are sent to the dynamixels (currently every 0.2 seconds). However, this would likely introduce noticeable input delay.
+\\
+\\
+During the demonstration, movement was heavily delayed. A possible issue is a congested network during the day, since we operated on the unviersity wireless network available to everyone. An ad-hoc network directly connecting the Pi to a laptop could have been a solution, but we were unable to test this.
 \\
 \\
 During the demonstration very heavy delays were experienced, and commands on the joystick would frequently fail to register, especially lifting the front segment. However, after cleaning up and restructuring the code, subsequent testing found the system to be very responsive and unregistered commands were fairly rare. At this point it is unclear whether it was an issue with the code or a more congested wifi network at the time of demonstration.
@@ -383,7 +389,7 @@ During the demonstration very heavy delays were experienced, and commands on the
 The aim of the project was to write a suite of software for the Open Academic Robot Kit which would provide locomotion, networking and compatibility with ROS. We created a library exposing a high level API for locomotion, and a networking model that was able to integrate with ROS and facilitate control of the robot with a Logitech controller.
 \\
 \\
-The final result is a cheap, accessible 3D-printed robot able to be controlled wirelessly.
+The final result is a cheap, accessible 3D-printed robot able to be controlled wirelessly. Despite the poor performance during the demonstration, after fixing some issues and more testing the mantis robot does respond well to real-time input.
 
 \subsection{Future Work}
 While significant progress has been made, there is still plenty of additional work that could be done.

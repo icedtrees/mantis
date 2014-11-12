@@ -37,7 +37,7 @@
 Current rescue robots are incredibly expensive and not suitable for student use. On the other hand DIY kits have many limitations and are not sufficiently customiseable for undergraduate or graduate use. The Open Academic Robot Kit aims to change that, however there is no library for the robot design that is available. In this paper a basic library is detailed, with locomotion, networking and compatibility with ROS.
 \end{abstract}
 
-\section{}
+\section{Introduction}
 Disaster, such as the Great Hanshi-Awaji earthquake on the 17th of January 1995, or the advent of the Sept 11 attacks on the World Trade Centre necessarily impel research into better search and rescue strategies, and search and rescue robots (Kobe University Library, 1999; Davids, 2002). Rescue robots had been proved in the site of such catastrophe, and large amounts of funding have been invested. Nevertheless cost is still a significant consideration, with specialised robots running upwards of \$60,000 and as high as \$300,000 (Bigge, 2011). Certainly not all rescue robots are so expensive, but price is still rather inhibitory to hobbyists and students, who have much to add to the rescue robotic endeavour. On the other hand robotics kits geared towards student use are limited in function, difficult to customise, and have poor compatibility with parts from other companies or outside sources (Open Academic Robotic Kit, 2014).
 \\
 \\
@@ -399,6 +399,15 @@ OARKit also contains an optional movable arm which holds a camera or sensor. Add
 \\
 Currently the parts do not fit very well inside the main body of the robot chassis. The USB2Dynamixel, while convenient, is very bulky and is the main culprit of this problem, since it contains USB converters for multiple outputs, such as RS232 and RS485. It can be removed if the Pi interfaces with the dynamixel motors directly via a more compact TTL converter. We could theoretically attach such a system directly to the Pi's USB pins. Something like the USB2AX would solve this problem very efficiently (see Xevelabs, 2014).
 
+\subsection{Resources}
+The code for our project can be found at http://github.com/icedtrees/mantis
+
+\subsection{Acknowledgements}
+We would like to acknowledge R. Sheh for his work on the OARKit Robot that facilitated this project. The website link to his work can be found in the references section. \\
+\\
+We also acknowledge Patrick from the PIRobot project for his work on the open-source pydynamixel library.\\
+\\
+Finally, we would like to acknowledge Matthew McGill, our project supervisor, who assisted greatly with electrical difficulties and hardware problems.
 
 \section{References}
 Bigge, R. (2011). \textit{Robots to the rescue}. Available at\\
@@ -407,7 +416,8 @@ https://secure.globeadvisor.com/servlet/ArticleNews/story/gam/20110527\\
 \\
 Bohren, J. (2013). \textit{joy}. Available at http://wiki.ros.org/joy. (accessed 12/11/2014).\\
 \\
-Chilson, L. (2013). \textit{The difference between ABS and PLA for 3D printing}. Available at http://www.protoparadigm.com/news-updates/the-difference-between-abs-and-pla-for-3d-printing/. (accessed 12/11/2014).
+Chilson, L. (2013). \textit{The difference between ABS and PLA for 3D printing}. Available at http://www.protoparadigm.com/news-updates/the-difference-between-abs-and-pla-for-3d-printing/. (accessed 12/11/2014).\\
+\\
 Davids, A. (2002). Urban search and rescue robots: from tragedy to technology. \textit{Intelligent Systems, IEEE 17}(2). 81 - 83.\\
 \\
 Gindel, P. (2010). \textit{Arduino library for AX-12}. \\Available at http://www.pablogindel.com/2010/01/biblioteca-de-arduino-para-ax-12/. (accessed 09/11/14).\\
@@ -419,6 +429,8 @@ Kobe University Library. (1999) \textit{Great Hanshin-Awaji Earthquake Disaster 
 The Open Academic Robotic Kit. Available at www.oarkit.org (accessed 09/11/2014).\\
 \\
 PlastiDip. (2013). \textit{Plastic Dips and Coatings}. Available at https://www.plastidip.net.au/. (accessed 12/11/2014).\\
+\\
+PiRobot Productions. (2014). \textit{pydynamixel: A Python version of a dynamixel library originally written in C\#}. Available at https://code.google.com/p/pydynamixel/. (accessed 5/11/2014)\\
 \\
 Robotis. (2010). \textit{ROBOTIS e-Manual AX-12/ AX-12+/ AX-12A}. Available at http://support.robotis.com/en/product/dynamixel/ax\_series/dxl\_ax\_actuator.htm. (accessed 12/11/2014).\\
 \\

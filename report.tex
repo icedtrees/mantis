@@ -232,13 +232,11 @@ Since we have six wheels and not four, there are six different axles. Thus we mu
 \\
 \\
 For $\theta_{front} > \frac{\pi}{2}$:
-\\
-$\theta_{back} = tan^{-1}(tan(\theta_{front}) \times \frac{spine_{top}}{spine_{bottom}})$
+\[ \theta_{back} = tan^{-1}(tan(\theta_{front}) \times \frac{spine_{top}}{spine_{bottom}}) \]
 \\
 \\
 For $\theta_{front} > \frac{\pi}{2}$:
-\\
-$\theta_{back} = \pi - tan^{-1}(tan(\pi - \theta_{front}) \times \frac{spine_{top}}{spine_{bottom}})$
+\[ \theta_{back} = \pi - tan^{-1}(tan(\pi - \theta_{front}) \times \frac{spine_{top}}{spine_{bottom}}) \]
 \\
 \\
 With the angle values of the top and bottom, we can thus define the relative velocities of all the wheels as the distances from the center point:
@@ -264,12 +262,15 @@ In our mantis library, we define the velocity of the vehicle $v$ as the tangenti
 \\
 This method of locomotion is quite efficient - the wheels are all synchronised fairly well, and there is little drag of the tyres on the ground. However, one can also add a skid steering velocity onto the wheels on each side, sacrificing efficiency to be able to perform a tighter turn.
 \\
-We implement this additively - there is a skid steering command available that will add a certain velocity to the wheels on each side of the robot, aiding turns greatly. For example, if a velocity of $2pi m/s$ was added to one side, and a velocity of $-2pi m/s$ was added to the other side, the vehicle would theoretically rotate at approximately $1 / radius$ revolutions per second along its current course, something not achievable with articulated steering. However, as mentioned before, since this is being performed on six wheels, there is a fair amount of drag between the wheels and the ground. This can be reduced by lifting up the front portion of the robot, so only four wheels are in contact with the ground.
+\\
+We implement this additively - there is a skid steering command available that will add a certain velocity to the wheels on each side of the robot, aiding turns greatly. For example, if a velocity of $2pi$ $m/s$ was added to one side, and a velocity of $-2pi$ $m/s$ was added to the other side, the vehicle would theoretically rotate at approximately $1 / radius$ revolutions per second along its current course, something not achievable with articulated steering. However, as mentioned before, since this is being performed on six wheels, there is a fair amount of drag between the wheels and the ground. This can be reduced by lifting up the front portion of the robot, so only four wheels are in contact with the ground.
 
 \subsection{Results}
 During our tests of the robot, we found that both methods of steering were effective on wood and carpet surfaces. The six-wheeled skid steering had some issues on the carpet because the wheels gripped the surface too hard, but if the front portion of the robot was lifted up, there were no resulting problems. Additionally, the skid steering was unreliable and caused the robot to rotate differing angular distances on different surfaces.
 \\
-However, the robot did also have the problem of not having enough grip. The wheels were constructed from ABS filament and had no coating, which means they had very little friction with the wooden surface and had some trouble performing maneuvers on sloped wooden surfaces, as it would slip down.
+\\
+However, the robot did also have the problem of not having enough grip. The wheels were constructed from PLA filament and had no coating, which means they had very little friction with the wooden surface and had some trouble performing maneuvers on sloped wooden surfaces, as it would slip down.
+\\
 \\
 It was also noted that it was quite possible to reliably execute tight turns on multiple surfaces by using common vehicle maneuvers, such as three-point turns, in conjunction with articulated steering.
 
@@ -284,7 +285,44 @@ We provide several interface functions in mantis.py that allow control of the ro
     \item lift(int -1023 to 1023): Same as above, except with the lifting joint.
 \end{itemize}
 
-We define multiple constants which refer to all the dimensions and maximum and minimum turning points for the servomotors. These can be found in pyoarkit/config.py
+We define multiple constants which refer to all the dimensions and maximum and minimum turning points for the servomotors. These can be found in pyoarkit/config.py. The default measurements we use are as follows:
+\lstset{language=Python}
+\begin{lstlisting}
+# angles for top axle
+CENTER_VALUE_TOP = 512.0 - 10.0  # 90 degrees
+CENTER_ANGLE_TOP = radians(90.0)
+MIN_VALUE_TOP = 512.0 - 110.0  # 65 degrees
+MIN_ANGLE_TOP = radians(65.0)
+MAX_VALUE_TOP = 512.0 + 100.0  # 115 degrees
+MAX_ANGLE_TOP = radians(115.0)
+
+# angles for bottom axle
+CENTER_VALUE_BOTTOM = 512.0 + 10.0  # 90 degrees
+CENTER_ANGLE_BOTTOM = radians(90.0)
+MIN_VALUE_BOTTOM = 512.0 - 60.0  # 110 degrees
+MIN_ANGLE_BOTTOM = radians(110.0)  # note min value gives a corresponding larger angle
+MAX_VALUE_BOTTOM = 512.0 + 90.0  # 70 degrees
+MAX_ANGLE_BOTTOM = radians(70.0)
+
+# lengths of arms (mm)
+ARM_TOP_LEFT = 91.0
+ARM_TOP_RIGHT = 91.0
+ARM_MID_LEFT = 95.0
+ARM_MID_RIGHT = 95.0
+ARM_BOTTOM_LEFT = 91.0
+ARM_BOTTOM_RIGHT = 91.0
+
+# lengths of spine (mm)
+SPINE_TOP = 130.0
+SPINE_BOTTOM = 120.0
+
+# max velocity of any given wheel
+MAX_WHEEL_VELOCITY = 1023.0
+
+# limits for lift
+MIN_LIFT_VALUE = 412
+CENTER_LIFT_VALUE = 512
+\end{lstlisting}
 
 \section{References}
 Bigge, R. (2011). \textit{Robots to the rescue}. Available at\\

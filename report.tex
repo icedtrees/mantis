@@ -285,19 +285,21 @@ During the demonstration very heavy delays were experienced, and commands on the
 
 \section{Locomotion}
 The OARKit robot has a fairly rare design in which six wheels can turn relative to each other via two rotating joints, each with a range of about $\pm20$ degrees.
-\\
-\\
-figure goes here
-\\
-\\
+\begin{figure}[ht]
+    \includegraphics[height = 200pt]{report_images/diagram1.png}
+    \caption{(A diagram of the articulated steering system of the OARKit robot.)}
+    \label{fig:diagram1}
+\end{figure}
 There have been similar studies into wheel velocities for similar vehicles, such as Shamah et al. (2001)'s calculations diagrammed above, but the OARKit robot is unique in that it has mobile joints rather than rotating axles, and it also has six wheels for better locomotion.
 \\
 \\
 We use similar calculations to Shamah et al., by definining a common intersection point for lines passing through all the axles, and using the distance between the wheel and the common intersection point to scale the relative velocity of the wheel.
 \\
-\\
-diagram goes here
-\\
+\begin{figure}[ht]
+    \includegraphics[height = 200pt]{report_images/diagram2.png}
+    \caption{(The measurements we used in our calculations of wheel velocities)}
+    \label{fig:diagram2}
+\end{figure}
 \\
 Since we have six wheels and not four, there are six different axles. Thus we must make sure that the back axle is angled such that the line extended inwards would intersect with the intersection of the front two axle lines.
 \\

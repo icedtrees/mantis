@@ -244,7 +244,8 @@ The OARKit robot has a fairly rare design in which six wheels can turn relative 
 \\
 There have been similar studies into wheel velocities for similar vehicles, such as Shamah et al. (2001)'s calculations diagrammed above, but the OARKit robot is unique in that it has mobile joints rather than rotating axles, and it also has six wheels for better locomotion.
 \\
-We use similar calculations to Shamah et al., by definining a common intersection point for lines passing through all the axles, and using the distance between the wheel and the common intersection point to scale the relative velocity of the wheel.
+\\
+Similar calculations to Shamah et al. were used. By definining a common intersection point for lines passing through all the axles, and using the distance between the wheel and the common intersection point to scale the relative velocity of the wheel, it is possible to define a smooth, efficient movement model for the robot.
 \\
 \begin{figure}[ht]
     \includegraphics[height = 200pt]{report_images/diagram2.png}
@@ -253,7 +254,7 @@ We use similar calculations to Shamah et al., by definining a common intersectio
 \end{figure}
 \\
 \\
-Since we have six wheels and not four, there are six different axles. Thus we must make sure that the back axle is angled such that the line extended inwards would intersect with the intersection of the front two axle lines.
+Since there are six wheels and not four, three different axles are used to steer the robot. Thus it is essential to make sure that the back axle is angled such that the line extended inwards would intersect with the intersection of the front two axle lines.
 \\
 \\
 For $\theta_{front} > \frac{\pi}{2}$:
@@ -264,7 +265,7 @@ For $\theta_{front} > \frac{\pi}{2}$:
 \[ \theta_{back} = \pi - tan^{-1}(tan(\pi - \theta_{front}) \times \frac{spine_{top}}{spine_{bottom}}) \]
 \\
 \\
-With the angle values of the top and bottom, we can thus define the relative velocities of all the wheels as the distances from the center point:
+Using the angle values of the top and bottom, a definition of the relative velocities of all the wheels as the distances from the center point:
 \\
 \[ \omega_{topleft} \propto \frac{1}{sin(a)} + \frac{arm_{topleft}}{spine_{top} * tan(\theta_{top})} \]
 \[ \omega_{topright} \propto \frac{1}{sin(1)} - \frac{arm_{topright}}{spine_{top} * tan(\theta_{top})} \]
@@ -274,7 +275,7 @@ With the angle values of the top and bottom, we can thus define the relative vel
 \[ \omega_{bottomleft} \propto \frac{spine_{bottom}}{spine_{top} * tan(\theta_{top}) * cos(\theta{bottom})} - \frac{arm_{bottomright}}{spine_{top} * tan(\theta_{top})} \]
 \\
 \\
-We use this kind of articulated steering as the baseline velocity for all the wheels when the robot is at a certain inclination. Ideally this would cause all wheels to travel exactly at the correct tangential velocity.
+This kind of articulated steering is used as the baseline velocity for all the wheels when the robot is at a certain inclination. Ideally this would cause all wheels to travel exactly at the most efficient tangential velocity for the given inclination.
 \\
 In our mantis library, we define the velocity of the vehicle $v$ as the tangential velocity of the center point of the middle axle (which is $spine_{top} * tan(\theta_{top})$ distance from the central intersection). We can multiply any of the above formulae by $v$ to obtain a velocity relative to the velocity of the center of the vehicle:
 \\

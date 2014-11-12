@@ -197,6 +197,7 @@ In order to power the dynamixel motors while using the USB2Dynamixel, the 12V po
 \section{Locomotion}
 The OARKit robot has a fairly rare design in which six wheels can turn relative to each other via two rotating joints, each with a range of about $\pm20$ degrees.
 \begin{figure}[ht]
+    \centering
     \includegraphics[height = 200pt]{report_images/diagram1.png}
     \caption{(A diagram of the articulated steering system of the OARKit robot.)}
     \label{fig:diagram1}
@@ -207,6 +208,7 @@ There have been similar studies into wheel velocities for similar vehicles, such
 We use similar calculations to Shamah et al., by definining a common intersection point for lines passing through all the axles, and using the distance between the wheel and the common intersection point to scale the relative velocity of the wheel.
 \\
 \begin{figure}[ht]
+    \centering
     \includegraphics[height = 200pt]{report_images/diagram2.png}
     \caption{(The measurements we used in our calculations of wheel velocities)}
     \label{fig:diagram2}
@@ -380,10 +382,7 @@ The server and client was changed to use TCP instead of UDP, but the issue persi
 A possible solution could be to try lowering the rate at which commands are sent to the dynamixels (currently every 0.2 seconds). However, this would likely introduce noticeable input delay.
 \\
 \\
-During the demonstration, movement was heavily delayed. A possible issue is a congested network during the day, since we operated on the unviersity wireless network available to everyone. An ad-hoc network directly connecting the Pi to a laptop could have been a solution, but we were unable to test this.
-\\
-\\
-During the demonstration very heavy delays were experienced, and commands on the joystick would frequently fail to register, especially lifting the front segment. However, after cleaning up and restructuring the code, subsequent testing found the system to be very responsive and unregistered commands were fairly rare. At this point it is unclear whether it was an issue with the code or a more congested wifi network at the time of demonstration.
+During the demonstration very heavy delays were experienced, and commands on the joystick would frequently fail to register, especially lifting the front segment. However, after cleaning up and restructuring the code, subsequent testing found the system to be very responsive and unregistered commands were fairly rare. At this point it is unclear whether it was an issue with the code or a more congested wifi network at the time of demonstration. An ad-hoc network directly connecting the Pi to a laptop could have been a solution, but we were unable to test this.
 
 \section{Conclusion}
 The aim of the project was to write a suite of software for the Open Academic Robot Kit which would provide locomotion, networking and compatibility with ROS. We created a library exposing a high level API for locomotion, and a networking model that was able to integrate with ROS and facilitate control of the robot with a Logitech controller.

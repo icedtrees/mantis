@@ -297,6 +297,22 @@ We provide several interface functions in mantis.py that allow control of the ro
 
 We define multiple constants which refer to all the dimensions and maximum and minimum turning points for the servomotors. These can be found in pyoarkit/config.py
 
+\section{Conclusion}
+The aim of the project was to write a suite of software for the Open Academic Robot Kit which would provide locomotion, networking and compatibility with ROS. We created a library exposing a high level API for locomotion, and a networking model that was able to integrate with ROS and facilitate control of the robot with a Logitech controller.
+\\
+\\
+The final result is a cheap, accessible 3D-printed robot able to be controlled wirelessly and therefore we have achieved our goal. //TODO reword
+
+\subsection{Future Work}
+While significant progress has been made, there is still plenty of additional work that could be done.
+\\
+\\
+The OARKit is extensible with an option movable arm which holds a camera or sensor. Additional software could be written to move the arm appropriately and process the camera or sensor data. Perhaps a more powerful onboard controller would work better here to be able to do some of the image processing locally.
+\\
+\\
+Currently the parts do not fit very well inside the main body of the robot chassis. The USB2Dynamixel, while convenient, is very bulky and is the main culprit of this problem. Perhaps it could be skipped entirely and the Pi could interface with the dynamixel motors directly via serial pins. //TODO cite people talking about how need additional gate/circuit.
+
+
 \section{References}
 Bigge, R. (2011). \textit{Robots to the rescue}. Available at\\
 https://secure.globeadvisor.com/servlet/ArticleNews/story/gam/20110527\\
